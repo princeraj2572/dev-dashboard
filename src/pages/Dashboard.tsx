@@ -78,7 +78,8 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-8 px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-white via-indigo-50 to-white dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900">
+      <div className="space-y-8 px-4 py-12">
       {/* Welcome Hero */}
       <HeroSection
         title={`Welcome back, Developer! 🎉`}
@@ -227,6 +228,7 @@ export const Dashboard = () => {
 
       {/* Activity Feed */}
       <ActivityFeed />
+      </div>
     </div>
   )
 }

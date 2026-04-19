@@ -14,7 +14,7 @@ export const Goals = () => {
   const activeGoals = goals.filter((g) => getCompletedGoals().every((c) => c.id !== g.id))
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-white dark:from-slate-900 dark:via-emerald-950 dark:to-slate-900">
       {/* Hero Header */}
       <HeroSection
         title="🎯 Goals & Objectives"
@@ -23,7 +23,7 @@ export const Goals = () => {
         backgroundVariant="success"
       />
 
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
         {/* Goal Form */}
         <GoalForm onSubmit={addGoal} />
 

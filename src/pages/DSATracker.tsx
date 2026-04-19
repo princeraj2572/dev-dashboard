@@ -25,7 +25,7 @@ export const DSATracker = () => {
   const todayMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0) / 60
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-white via-cyan-50 to-white dark:from-slate-900 dark:via-cyan-950 dark:to-slate-900">
       {/* Hero Header */}
       <HeroSection
         title="⏱️ Coding Timer & DSA Tracker"
@@ -34,7 +34,7 @@ export const DSATracker = () => {
         backgroundVariant="info"
       />
 
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
         {/* Timer Display */}
         <GlassCard title="Session Timer">
           <TimerDisplay elapsedSeconds={elapsedSeconds} formatTime={formatTime} />
