@@ -12,7 +12,6 @@ import StatCard from '@/components/cards/StatCard'
 export const ComponentShowcase = () => {
   const [inputValue, setInputValue] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedAlert, setSelectedAlert] = useState<'success' | 'error' | 'warning' | 'info' | null>(null)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12 space-y-12">
@@ -133,28 +132,24 @@ export const ComponentShowcase = () => {
           <Alert
             type="success"
             title="✓ Success Alert"
-            onClose={() => setSelectedAlert(null)}
           >
             This is a success alert message. Everything went according to plan!
           </Alert>
           <Alert
             type="error"
             title="⚠️ Error Alert"
-            onClose={() => setSelectedAlert(null)}
           >
             This is an error alert message. Something went wrong.
           </Alert>
           <Alert
             type="warning"
             title="⚡ Warning Alert"
-            onClose={() => setSelectedAlert(null)}
           >
             This is a warning alert message. Please be careful.
           </Alert>
           <Alert
             type="info"
             title="ℹ️ Info Alert"
-            onClose={() => setSelectedAlert(null)}
           >
             This is an info alert message. Here's some useful information.
           </Alert>
