@@ -5,6 +5,7 @@ import { useGoals } from '@/hooks/useGoals'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { calculateTotalScore } from '@/utils/scoreCalculator'
 import { calculateStreaks } from '@/utils/streakCalculator'
+import { Button } from '@/components/ui/button'
 import MetricCard from '@/components/cards/MetricCard'
 import CommitChart from '@/components/charts/CommitChart'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
@@ -14,12 +15,11 @@ import ProblemDifficultyChart from '@/components/leetcode/ProblemDifficultyChart
 import ScoreDisplay from '@/components/score/ScoreDisplay'
 import StreakDisplay from '@/components/streak/StreakDisplay'
 import Section from '@/components/common/Section'
-import Card from '@/components/common/Card'
+import { Card } from '@/components/ui/card'
 import Alert from '@/components/common/Alert'
-import Button from '@/components/common/Button'
+import Badge from '@/components/common/Badge'
 import ProgressBar from '@/components/common/ProgressBar'
 import HeroSection from '@/components/common/HeroSection'
-import Badge from '@/components/common/Badge'
 
 export const Dashboard = () => {
   const { githubUsername, leetcodeUsername } = useDashboardStore()
@@ -166,7 +166,7 @@ export const Dashboard = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => window.location.href = '/goals'}
-                  fullWidth
+                  className="w-full"
                 >
                   View All Goals →
                 </Button>

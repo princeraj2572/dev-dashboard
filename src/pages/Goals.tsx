@@ -1,7 +1,7 @@
 import { useGoals } from '@/hooks/useGoals'
 import GoalCard from '@/components/goals/GoalCard'
 import GoalForm from '@/components/goals/GoalForm'
-import Card from '@/components/common/Card'
+import { Card } from '@/components/ui/card'
 import Badge from '@/components/common/Badge'
 import HeroSection from '@/components/common/HeroSection'
 import MetricCard from '@/components/cards/MetricCard'
