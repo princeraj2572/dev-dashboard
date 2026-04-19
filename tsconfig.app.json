@@ -10,7 +10,9 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"],
+      "@/components": ["./src/components"],
+      "@/lib/utils": ["./src/lib/utils"]
     },
 
     /* Bundler mode */

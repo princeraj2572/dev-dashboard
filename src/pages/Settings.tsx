@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useDashboardStore } from '@/store/dashboardStore'
-import Button from '@/components/common/Button'
-import Input from '@/components/common/Input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import Alert from '@/components/common/Alert'
-import GlassCard from '@/components/cards/GlassCard'
 import HeroSection from '@/components/common/HeroSection'
 
 export const Settings = () => {
@@ -51,93 +51,103 @@ export const Settings = () => {
         )}
 
         {/* GitHub Settings */}
-        <GlassCard title="🐙 GitHub" className="mb-5">
-          <Input
-            label="Username"
-            value={githubUsername}
-            onChange={setGithubUsername}
-            placeholder="e.g., octocat"
-            helperText="Your GitHub username for stats"
-          />
-          <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-950 rounded-lg border border-indigo-200 dark:border-indigo-800">
-            <p className="text-xs font-medium text-indigo-900 dark:text-indigo-300 mb-1">
-              🔐 Token Setup
-            </p>
-            <p className="text-xs text-indigo-700 dark:text-indigo-400">
-              Add <code className="bg-white dark:bg-slate-800 px-1 rounded">VITE_GITHUB_TOKEN</code> to <code className="bg-white dark:bg-slate-800 px-1 rounded">.env.local</code>
-            </p>
-          </div>
-        </GlassCard>
+        <Card className="mb-5">
+          <CardHeader>
+            <CardTitle className="text-lg">🐙 GitHub</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Username</label>
+              <Input
+                value={githubUsername}
+                onChange={(e) => setGithubUsername(e.target.value)}
+                placeholder="e.g., octocat"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Your GitHub username for stats</p>
+            </div>
+            <div className="p-3 bg-accent rounded-lg border border-border">
+              <p className="text-xs font-medium mb-1">🔐 Token Setup</p>
+              <p className="text-xs text-muted-foreground">
+                Add <code className="bg-background px-1 rounded">VITE_GITHUB_TOKEN</code> to <code className="bg-background px-1 rounded">.env.local</code>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* LeetCode Settings */}
-        <GlassCard title="🎯 LeetCode" className="mb-5">
-          <Input
-            label="Username"
-            value={leetcodeUsername}
-            onChange={setLeetcodeUsername}
-            placeholder="e.g., yourletcode"
-            helperText="Your LeetCode username for DSA tracking"
-          />
-        </GlassCard>
+        <Card className="mb-5">
+          <CardHeader>
+            <CardTitle className="text-lg">🎯 LeetCode</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Username</label>
+              <Input
+                value={leetcodeUsername}
+                onChange={(e) => setLeetcodeUsername(e.target.value)}
+                placeholder="e.g., yourletcode"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Your LeetCode username for DSA tracking</p>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Appearance */}
-        <GlassCard title="🌓 Theme" className="mb-5">
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => store.setTheme('light')}
-              className={`p-3 rounded-lg border-2 transition duration-200 font-medium text-sm ${
-                store.theme === 'light'
-                  ? 'border-indigo-500 bg-indigo-100 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100 shadow-md'
-                  : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:border-indigo-300 dark:hover:border-indigo-600'
-              }`}
-            >
-              ☀️ Light
-            </button>
-            <button
-              onClick={() => store.setTheme('dark')}
-              className={`p-3 rounded-lg border-2 transition duration-200 font-medium text-sm ${
-                store.theme === 'dark'
-                  ? 'border-indigo-500 bg-indigo-100 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100 shadow-md'
-                  : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:border-indigo-300 dark:hover:border-indigo-600'
-              }`}
-            >
-              🌙 Dark
-            </button>
-          </div>
-        </GlassCard>
+        <Card className="mb-5">
+          <CardHeader>
+            <CardTitle className="text-lg">🌓 Theme</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                onClick={() => store.setTheme('light')}
+                variant={store.theme === 'light' ? 'default' : 'outline'}
+              >
+                ☀️ Light
+              </Button>
+              <Button
+                onClick={() => store.setTheme('dark')}
+                variant={store.theme === 'dark' ? 'default' : 'outline'}
+              >
+                🌙 Dark
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Coding Timer */}
-        <GlassCard title="⏱️ Coding Sessions" className="mb-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-            Clear all your saved coding session data.
-          </p>
-          {!showClearConfirm ? (
-            <Button
-              variant="danger"
-              fullWidth
-              onClick={() => setShowClearConfirm(true)}
-            >
-              🗑️ Clear Sessions
-            </Button>
-          ) : (
-            <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-4">
-              <p className="font-semibold text-red-900 dark:text-red-300 mb-3 text-sm">
-                ⚠️ Confirm deletion. This cannot be undone.
-              </p>
-              <div className="flex gap-2">
-                <Button variant="danger" onClick={handleClearSessions} className="flex-1">
-                  Delete
-                </Button>
-                <Button variant="secondary" onClick={() => setShowClearConfirm(false)} className="flex-1">
-                  Cancel
-                </Button>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg">⏱️ Coding Sessions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">Clear all your saved coding session data.</p>
+            {!showClearConfirm ? (
+              <Button
+                variant="destructive"
+                onClick={() => setShowClearConfirm(true)}
+                className="w-full"
+              >
+                🗑️ Clear Sessions
+              </Button>
+            ) : (
+              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+                <p className="font-semibold text-destructive text-sm mb-3">⚠️ Confirm deletion. This cannot be undone.</p>
+                <div className="flex gap-2">
+                  <Button variant="destructive" onClick={handleClearSessions} className="flex-1">
+                    Delete
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowClearConfirm(false)} className="flex-1">
+                    Cancel
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-        </GlassCard>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Save Button */}
-        <Button onClick={handleSave} fullWidth className="mb-8 py-3 font-semibold">
+        <Button onClick={handleSave} className="w-full py-2 h-auto">
           💾 Save Settings
         </Button>
       </div>
