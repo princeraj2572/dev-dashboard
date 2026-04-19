@@ -1,4 +1,5 @@
 import { createApiClient, validateCredentials, callApi, getErrorMessage } from './apiClient'
+import { dedupedRequest } from './requestDedup'
 
 const GITHUB_API_BASE = 'https://api.github.com'
 const githubClient = createApiClient({
@@ -33,16 +34,22 @@ export const fetchUserEvents = async (username: string, token: string) => {
     return null
   }
 
-  return callApi(
+  return dedupedRequest(
+    'GET',
+    `${GITHUB_API_BASE}/users/${username}/events`,
     () =>
-      githubClient
-        .get<GithubEvent[]>(`${GITHUB_API_BASE}/users/${username}/events`, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { per_page: 100 },
-          timeout: 10000,
-        })
-        .then((r) => r.data),
-    'GitHub Events'
+      callApi(
+        () =>
+          githubClient
+            .get<GithubEvent[]>(`${GITHUB_API_BASE}/users/${username}/events`, {
+              headers: { Authorization: `Bearer ${token}` },
+              params: { per_page: 100 },
+              timeout: 10000,
+            })
+            .then((r) => r.data),
+        'GitHub Events'
+      ),
+    { username }
   )
 }
 
