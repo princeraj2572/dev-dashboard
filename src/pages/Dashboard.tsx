@@ -1,21 +1,35 @@
 import { useGithubData } from '@/hooks/useGithubData'
+import { useLeetCodeData } from '@/hooks/useLeetCodeData'
 import { useDashboardStore } from '@/store/dashboardStore'
+import { calculateTotalScore } from '@/utils/scoreCalculator'
 import StatsCard from '@/components/cards/StatsCard'
 import CommitChart from '@/components/charts/CommitChart'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
 import ActivityFeed from '@/components/common/ActivityFeed'
+import LeetCodeStatsCard from '@/components/leetcode/LeetCodeStatsCard'
+import ProblemDifficultyChart from '@/components/leetcode/ProblemDifficultyChart'
+import ScoreDisplay from '@/components/score/ScoreDisplay'
 
 export const Dashboard = () => {
-  const { githubUsername } = useDashboardStore()
-  const { data: githubStats, isLoading, error } = useGithubData()
+  const { githubUsername, leetcodeUsername } = useDashboardStore()
+  const { data: githubStats, isLoading: githubLoading, error: githubError } = useGithubData()
+  const { score: leetcodeScore, ...leetcodeStats } = useLeetCodeData()
 
-  if (!githubUsername) {
+  // Calculate combined score
+  const combinedScore = calculateTotalScore(githubStats || null, {
+    ...leetcodeStats,
+    score: leetcodeScore,
+  } as any)
+
+  const hasNoProfiles = !githubUsername && !leetcodeUsername
+
+  if (hasNoProfiles) {
     return (
       <div className="p-8">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
           <h2 className="text-2xl font-bold mb-2">Hello! 👋</h2>
           <p className="text-gray-700 mb-4">
-            To get started, please enter your GitHub username in the Settings page.
+            To get started, please enter your GitHub and LeetCode usernames in the Settings page.
           </p>
           <a
             href="/settings"
@@ -28,7 +42,7 @@ export const Dashboard = () => {
     )
   }
 
-  if (isLoading) {
+  if (githubLoading) {
     return (
       <div className="p-8">
         <LoadingSpinner />
@@ -36,7 +50,7 @@ export const Dashboard = () => {
     )
   }
 
-  if (error) {
+  if (githubError) {
     return (
       <div className="p-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
@@ -56,6 +70,9 @@ export const Dashboard = () => {
         <p className="text-gray-600">Track your productivity and coding progress</p>
       </div>
 
+      {/* Score Display - Prominent */}
+      <ScoreDisplay score={combinedScore} />
+
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatsCard
@@ -72,10 +89,11 @@ export const Dashboard = () => {
           trend="neutral"
         />
         <StatsCard
-          title="Current Streak"
-          value="0"
-          unit="days"
-          trend="neutral"
+          title="Problems Solved"
+          value={leetcodeStats.totalSolved || 0}
+          unit="problems"
+          trend="up"
+          trendValue="+2"
         />
       </div>
 
@@ -106,6 +124,14 @@ export const Dashboard = () => {
           )}
         </div>
       </div>
+
+      {/* LeetCode Section */}
+      {leetcodeUsername && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <LeetCodeStatsCard stats={leetcodeStats} score={leetcodeScore} isLoading={false} />
+          <ProblemDifficultyChart stats={leetcodeStats} />
+        </div>
+      )}
 
       {/* Activity Feed */}
       <ActivityFeed />
