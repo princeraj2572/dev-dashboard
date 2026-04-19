@@ -5,6 +5,10 @@ import CommitChart from '@/components/charts/CommitChart'
 import ProblemDifficultyChart from '@/components/leetcode/ProblemDifficultyChart'
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
+import Section from '@/components/common/Section'
+import Card from '@/components/common/Card'
+import Alert from '@/components/common/Alert'
+import StatCard from '@/components/cards/StatCard'
 
 const COLORS = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
 
@@ -15,17 +19,20 @@ export const Analytics = () => {
 
   if (!githubUsername && !leetcodeUsername) {
     return (
-      <div className="p-8">
-        <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
-          <p className="dark:text-blue-200">Please set your GitHub or LeetCode username in Settings to view analytics.</p>
-        </div>
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <Alert
+          type="info"
+          title="👤 Missing Configuration"
+        >
+          Please set your GitHub or LeetCode username in Settings to view analytics.
+        </Alert>
       </div>
     )
   }
 
   if (githubLoading) {
     return (
-      <div className="p-8">
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
         <LoadingSpinner />
       </div>
     )
@@ -33,35 +40,36 @@ export const Analytics = () => {
 
   if (githubError && githubUsername) {
     return (
-      <div className="p-8">
-        <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-800 rounded-lg p-6">
-          <p className="text-red-700 dark:text-red-200">Could not fetch GitHub analytics data.</p>
-        </div>
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <Alert type="error" title="⚠️ Error Loading Data">
+          Could not fetch GitHub analytics data. Please check your settings.
+        </Alert>
       </div>
     )
   }
 
   return (
-    <div className="p-8 space-y-8">
-      <div>
-        <h1 className="text-4xl font-bold mb-2 dark:text-white">Analytics</h1>
-        <p className="text-gray-600 dark:text-gray-400">Deep dive into your algorithms & development statistics</p>
-      </div>
+    <div className="space-y-8 px-4 py-8">
+      {/* Header */}
+      <Section
+        title="📊 Analytics"
+        subtitle="Deep dive into your algorithms & development statistics"
+      />
 
       {/* GitHub Section */}
       {githubUsername && (
         <>
           {/* Commit Trends */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-6 dark:text-white">Commit Trends</h2>
+          <Card>
+            <h2 className="text-2xl font-bold mb-6 dark:text-white">📈 Commit Trends</h2>
             <CommitChart data={githubStats?.commitsPerDay || []} />
-          </div>
+          </Card>
 
           {/* Language and Repos */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Language Distribution - Pie Chart */}
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
-              <h2 className="text-2xl font-bold mb-6 dark:text-white">Languages Used</h2>
+            <Card>
+              <h2 className="text-2xl font-bold mb-6 dark:text-white">💻 Languages Used</h2>
               {githubStats?.languageBreakdown && githubStats.languageBreakdown.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
@@ -83,28 +91,31 @@ export const Analytics = () => {
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="text-gray-500 dark:text-gray-400">No language data available</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">No language data available</p>
               )}
-            </div>
+            </Card>
 
             {/* Top Repositories */}
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
-              <h2 className="text-2xl font-bold mb-6 dark:text-white">Top Repositories</h2>
+            <Card>
+              <h2 className="text-2xl font-bold mb-6 dark:text-white">⭐ Top Repositories</h2>
               {githubStats?.topRepos && githubStats.topRepos.length > 0 ? (
                 <div className="space-y-4">
-                  {githubStats.topRepos.map((repo) => (
-                    <div key={repo.name} className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold dark:text-white">{repo.name}</span>
-                        <span className="text-yellow-600 dark:text-yellow-400 font-bold">★ {repo.stars}</span>
+                  {githubStats.topRepos.slice(0, 5).map((repo) => (
+                    <div key={repo.name} className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-slate-700 last:border-0">
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900 dark:text-white">{repo.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Repository</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-yellow-600 dark:text-yellow-400">★ {repo.stars}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 dark:text-gray-400">No repository data available</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">No repository data available</p>
               )}
-            </div>
+            </Card>
           </div>
         </>
       )}
@@ -112,64 +123,58 @@ export const Analytics = () => {
       {/* LeetCode Section */}
       {leetcodeUsername && (
         <>
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
-            <h2 className="text-3xl font-bold mb-6 dark:text-white">Algorithm Mastery</h2>
-          </div>
+          <Section
+            title="🎯 Algorithm Mastery"
+            subtitle="Track your LeetCode performance"
+          />
 
           {/* Problem Distribution */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ProblemDifficultyChart stats={leetcodeStats} />
 
             {/* LeetCode Metrics */}
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 space-y-6">
-              <h2 className="text-2xl font-bold dark:text-white">LeetCode Metrics</h2>
-
-              <div className="space-y-4">
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">Total Solved</span>
-                    <span className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{leetcodeStats.totalSolved}</span>
-                  </div>
-                </div>
-
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">Acceptance Rate</span>
-                    <span className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      {leetcodeStats.acceptanceRate.toFixed(1)}%
-                    </span>
-                  </div>
-                </div>
-
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">Ranking</span>
-                    <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                      {leetcodeStats.ranking > 0 ? `#${leetcodeStats.ranking.toLocaleString()}` : 'N/A'}
-                    </span>
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-gray-700 dark:text-gray-300 font-medium">Problem Breakdown</span>
-                  <div className="mt-4 space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-green-700 dark:text-green-400">Easy</span>
-                      <span className="font-bold text-green-600 dark:text-green-400">{leetcodeStats.easySolved}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-yellow-700 dark:text-yellow-400">Medium</span>
-                      <span className="font-bold text-yellow-600 dark:text-yellow-400">{leetcodeStats.mediumSolved}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-red-700 dark:text-red-400">Hard</span>
-                      <span className="font-bold text-red-600 dark:text-red-400">{leetcodeStats.hardSolved}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="space-y-4">
+              <StatCard
+                title="Total Solved"
+                value={leetcodeStats.totalSolved}
+                icon="✅"
+                trend="up"
+                change={5}
+              />
+              <StatCard
+                title="Acceptance Rate"
+                value={`${leetcodeStats.acceptanceRate.toFixed(1)}%`}
+                icon="📊"
+                trend="up"
+                change={2}
+              />
+              <Card>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">🏆 Global Ranking</h3>
+                <p className="text-4xl font-bold text-purple-600 dark:text-purple-400">
+                  {leetcodeStats.ranking > 0 ? `#${leetcodeStats.ranking.toLocaleString()}` : 'N/A'}
+                </p>
+              </Card>
             </div>
           </div>
+
+          {/* Problem Breakdown */}
+          <Card>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">📋 Problem Breakdown</h3>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                <p className="text-sm font-medium text-green-700 dark:text-green-300 mb-2">Easy</p>
+                <p className="text-3xl font-bold text-green-600 dark:text-green-400">{leetcodeStats.easySolved}</p>
+              </div>
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 border border-yellow-200 dark:border-yellow-800">
+                <p className="text-sm font-medium text-yellow-700 dark:text-yellow-300 mb-2">Medium</p>
+                <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{leetcodeStats.mediumSolved}</p>
+              </div>
+              <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
+                <p className="text-sm font-medium text-red-700 dark:text-red-300 mb-2">Hard</p>
+                <p className="text-3xl font-bold text-red-600 dark:text-red-400">{leetcodeStats.hardSolved}</p>
+              </div>
+            </div>
+          </Card>
         </>
       )}
     </div>
