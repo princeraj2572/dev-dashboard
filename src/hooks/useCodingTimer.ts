@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { CodingSession } from '@/types'
-import { useDashboardStore } from '@/store/dashboardStore'
+import { type CodingSession } from '@/types'
 
 interface TimerState {
   isRunning: boolean
@@ -9,7 +8,6 @@ interface TimerState {
 }
 
 export const useCodingTimer = () => {
-  const store = useDashboardStore()
   const [state, setState] = useState<TimerState>(() => {
     const stored = localStorage.getItem('codingTimerState')
     if (stored) {

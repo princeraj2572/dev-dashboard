@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { fetchUserEvents, fetchUserRepos, calculateGithubStats } from '@/services/githubAPI'
-import { GithubStats } from '@/types'
+import type { GithubStats } from '@/types'
 
 export const useGithubData = () => {
   const { githubUsername } = useDashboardStore()

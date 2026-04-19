@@ -1,12 +1,14 @@
-import { ReactNode } from 'react'
+import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import MainContent from './MainContent'
 
-export const Layout = ({ children }: { children: ReactNode }) => {
+export const Layout = () => {
   return (
     <div className="flex h-screen bg-white dark:bg-slate-900">
       <Sidebar />
-      <MainContent>{children}</MainContent>
+      <MainContent>
+        <Outlet />
+      </MainContent>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance } from 'axios'
+import axios, { type AxiosError, type AxiosInstance, AxiosError as AxiosErrorClass } from 'axios'
 
 interface RetryConfig {
   maxRetries: number
@@ -109,10 +109,16 @@ export const callApi = async <T>(
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     console.error(`[${context}] API call failed:`, errorMessage)
 
-    // Log to monitoring service in production
-    if (process.env.NODE_ENV === 'production') {
-      // Send to monitoring/logging service
-      console.log(`[PRODUCTION ERROR] ${context}: ${errorMessage}`)
+    // Log to monitoring service in production (browser environment)
+    // In Node.js/SSR, process would be available
+    try {
+      // @ts-ignore - browser won't have process, but checking for safety
+      if (typeof window === 'undefined' && process.env.NODE_ENV === 'production') {
+        // Send to monitoring/logging service
+        console.log(`[PRODUCTION ERROR] ${context}: ${errorMessage}`)
+      }
+    } catch {
+      // Silently ignore in browser
     }
 
     return null
@@ -123,7 +129,7 @@ export const callApi = async <T>(
  * Get retry-safe error message for user
  */
 export const getErrorMessage = (error: unknown, context: string): string => {
-  if (error instanceof AxiosError) {
+  if (error instanceof AxiosErrorClass) {
     if (error.response?.status === 404) {
       return `${context}: Not found. Check your username.`
     }

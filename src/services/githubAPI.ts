@@ -1,4 +1,4 @@
-import { createApiClient, validateCredentials, callApi, getErrorMessage } from './apiClient'
+import { createApiClient, validateCredentials, callApi } from './apiClient'
 import { dedupedRequest } from './requestDedup'
 
 const GITHUB_API_BASE = 'https://api.github.com'

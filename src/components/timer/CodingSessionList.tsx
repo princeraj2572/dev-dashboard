@@ -1,4 +1,4 @@
-import { CodingSession } from '@/types'
+import { type CodingSession } from '@/types'
 
 interface CodingSessionListProps {
   sessions: CodingSession[]
