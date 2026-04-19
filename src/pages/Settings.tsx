@@ -29,16 +29,16 @@ export const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Hero Header */}
       <HeroSection
         title="Settings ⚙️"
-        subtitle="Configure your dashboard and preferences"
-        description="Manage your GitHub and LeetCode accounts, customize appearance, and control your coding session data."
+        subtitle="Configure your dashboard"
+        description="Personalize your experience and manage your accounts."
         backgroundVariant="primary"
       />
 
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto px-4 py-12">
         {/* Success Alert */}
         {savedMessage && (
           <Alert
@@ -51,70 +51,54 @@ export const Settings = () => {
         )}
 
         {/* GitHub Settings */}
-        <GlassCard title="🐙 GitHub Settings" className="mb-6">
-          <div className="space-y-4">
-            <Input
-              label="GitHub Username"
-              value={githubUsername}
-              onChange={setGithubUsername}
-              placeholder="e.g., octocat"
-              helperText="Your GitHub username for fetching commits and PR statistics."
-            />
-
-            <div className="bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg p-4">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                🔐 GitHub Personal Access Token
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Token is read from environment variable (VITE_GITHUB_TOKEN). Never share your token!
-              </p>
-              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded p-3 mb-4">
-                <p className="text-xs font-mono text-gray-600 dark:text-gray-400">
-                  Token stored in .env.local (not committed to git)
-                </p>
-              </div>
-              <a
-                href="https://github.com/settings/tokens"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-indigo-600 dark:text-indigo-400 hover:underline text-sm font-medium"
-              >
-                Create Personal Access Token →
-              </a>
-            </div>
+        <GlassCard title="🐙 GitHub" className="mb-5">
+          <Input
+            label="Username"
+            value={githubUsername}
+            onChange={setGithubUsername}
+            placeholder="e.g., octocat"
+            helperText="Your GitHub username for stats"
+          />
+          <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-950 rounded-lg border border-indigo-200 dark:border-indigo-800">
+            <p className="text-xs font-medium text-indigo-900 dark:text-indigo-300 mb-1">
+              🔐 Token Setup
+            </p>
+            <p className="text-xs text-indigo-700 dark:text-indigo-400">
+              Add <code className="bg-white dark:bg-slate-800 px-1 rounded">VITE_GITHUB_TOKEN</code> to <code className="bg-white dark:bg-slate-800 px-1 rounded">.env.local</code>
+            </p>
           </div>
         </GlassCard>
 
         {/* LeetCode Settings */}
-        <GlassCard title="🎯 LeetCode Settings" className="mb-6">
+        <GlassCard title="🎯 LeetCode" className="mb-5">
           <Input
-            label="LeetCode Username"
+            label="Username"
             value={leetcodeUsername}
             onChange={setLeetcodeUsername}
             placeholder="e.g., yourletcode"
-            helperText="Your LeetCode username for tracking DSA progress."
+            helperText="Your LeetCode username for DSA tracking"
           />
         </GlassCard>
 
-        {/* Theme Settings */}
-        <GlassCard title="🌓 Appearance" className="mb-6">
+        {/* Appearance */}
+        <GlassCard title="🌓 Theme" className="mb-5">
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => store.setTheme('light')}
-              className={`p-4 rounded-lg border-2 transition font-semibold ${
+              className={`p-3 rounded-lg border-2 transition duration-200 font-medium text-sm ${
                 store.theme === 'light'
-                  ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100'
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-indigo-500 bg-indigo-100 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100 shadow-md'
+                  : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:border-indigo-300 dark:hover:border-indigo-600'
               }`}
             >
               ☀️ Light
             </button>
             <button
               onClick={() => store.setTheme('dark')}
-              className={`p-4 rounded-lg border-2 transition font-semibold ${
+              className={`p-3 rounded-lg border-2 transition duration-200 font-medium text-sm ${
                 store.theme === 'dark'
-                  ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100'
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-indigo-500 bg-indigo-100 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100 shadow-md'
+                  : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:border-indigo-300 dark:hover:border-indigo-600'
               }`}
             >
               🌙 Dark
@@ -122,10 +106,10 @@ export const Settings = () => {
           </div>
         </GlassCard>
 
-        {/* Coding Timer Settings */}
-        <GlassCard title="⏱️ Coding Timer" className="mb-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Manage your coding session data. This action cannot be undone.
+        {/* Coding Timer */}
+        <GlassCard title="⏱️ Coding Sessions" className="mb-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            Clear all your saved coding session data.
           </p>
           {!showClearConfirm ? (
             <Button
@@ -133,26 +117,18 @@ export const Settings = () => {
               fullWidth
               onClick={() => setShowClearConfirm(true)}
             >
-              🗑️ Clear All Coding Sessions
+              🗑️ Clear Sessions
             </Button>
           ) : (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-              <p className="font-semibold text-red-900 dark:text-red-200 mb-4">
-                Are you sure? This cannot be undone.
+            <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-4">
+              <p className="font-semibold text-red-900 dark:text-red-300 mb-3 text-sm">
+                ⚠️ Confirm deletion. This cannot be undone.
               </p>
               <div className="flex gap-2">
-                <Button
-                  variant="danger"
-                  onClick={handleClearSessions}
-                  className="flex-1"
-                >
-                  Yes, Clear Sessions
+                <Button variant="danger" onClick={handleClearSessions} className="flex-1">
+                  Delete
                 </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowClearConfirm(false)}
-                  className="flex-1"
-                >
+                <Button variant="secondary" onClick={() => setShowClearConfirm(false)} className="flex-1">
                   Cancel
                 </Button>
               </div>
@@ -161,28 +137,9 @@ export const Settings = () => {
         </GlassCard>
 
         {/* Save Button */}
-        <Button
-          onClick={handleSave}
-          fullWidth
-          className="mb-8 py-3 text-lg"
-        >
+        <Button onClick={handleSave} fullWidth className="mb-8 py-3 font-semibold">
           💾 Save Settings
         </Button>
-
-        {/* Help Section */}
-        <Alert
-          type="info"
-          title="📚 How to Set Up"
-        >
-          <ol className="list-decimal list-inside space-y-2 text-sm">
-            <li>Create a GitHub Personal Access Token</li>
-            <li>Copy the token and add it to your .env.local file as VITE_GITHUB_TOKEN</li>
-            <li>Enter your GitHub username above</li>
-            <li>Click Save Settings</li>
-            <li>Go to Dashboard to see your stats!</li>
-            <li>Use the Coding Timer on DSA Tracker page to track your practice sessions</li>
-          </ol>
-        </Alert>
       </div>
     </div>
   )
