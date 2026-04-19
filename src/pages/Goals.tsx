@@ -1,6 +1,10 @@
 import { useGoals } from '@/hooks/useGoals'
 import GoalCard from '@/components/goals/GoalCard'
 import GoalForm from '@/components/goals/GoalForm'
+import Section from '@/components/common/Section'
+import Card from '@/components/common/Card'
+import Badge from '@/components/common/Badge'
+import StatCard from '@/components/cards/StatCard'
 
 export const Goals = () => {
   const { goals, addGoal, deleteGoal, updateProgress, getGoalProgress, getCompletedGoals } =
@@ -10,37 +14,48 @@ export const Goals = () => {
   const activeGoals = goals.filter((g) => getCompletedGoals().every((c) => c.id !== g.id))
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2 dark:text-white">Goals</h1>
-        <p className="text-gray-600 dark:text-gray-400">Track your development and learning goals</p>
-      </div>
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      {/* Header */}
+      <Section
+        title="🎯 Goals"
+        subtitle="Track your development and learning goals"
+      />
 
       {/* Goal Form */}
       <GoalForm onSubmit={addGoal} />
 
       {/* Statistics */}
       {goals.length > 0 && (
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 border border-blue-200 dark:border-blue-700 text-center">
-            <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{goals.length}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Total Goals</p>
-          </div>
-          <div className="bg-green-50 dark:bg-green-900 rounded-lg p-4 border border-green-200 dark:border-green-700 text-center">
-            <p className="text-3xl font-bold text-green-600 dark:text-green-400">{completedGoals.length}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Completed</p>
-          </div>
-          <div className="bg-purple-50 dark:bg-purple-900 rounded-lg p-4 border border-purple-200 dark:border-purple-700 text-center">
-            <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{activeGoals.length}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">In Progress</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <StatCard
+            title="Total Goals"
+            value={goals.length}
+            icon="📋"
+            trend="neutral"
+          />
+          <StatCard
+            title="Completed"
+            value={completedGoals.length}
+            icon="✅"
+            trend="up"
+            change={(completedGoals.length / Math.max(goals.length, 1)) * 100}
+          />
+          <StatCard
+            title="In Progress"
+            value={activeGoals.length}
+            icon="⚡"
+            trend="neutral"
+          />
         </div>
       )}
 
       {/* Active Goals */}
       {activeGoals.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-2xl font-bold dark:text-white">Active Goals</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold dark:text-white">Active Goals</h2>
+            <Badge variant="info">{activeGoals.length}</Badge>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {activeGoals.map((goal) => (
               <GoalCard
@@ -59,7 +74,10 @@ export const Goals = () => {
       {/* Completed Goals */}
       {completedGoals.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-2xl font-bold dark:text-white">🎉 Completed Goals</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold dark:text-white">🎉 Completed Goals</h2>
+            <Badge variant="success">{completedGoals.length}</Badge>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {completedGoals.map((goal) => (
               <GoalCard
@@ -77,10 +95,12 @@ export const Goals = () => {
 
       {/* Empty State */}
       {goals.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-5xl mb-4">🎯</p>
-          <p className="text-gray-600 dark:text-gray-400 text-lg">No goals yet. Create your first goal to get started!</p>
-        </div>
+        <Card className="text-center py-16">
+          <p className="text-6xl mb-4">🎯</p>
+          <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">
+            No goals yet. Create your first goal to get started!
+          </p>
+        </Card>
       )}
     </div>
   )

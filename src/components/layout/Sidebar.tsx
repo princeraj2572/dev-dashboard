@@ -1,34 +1,93 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+
+interface NavItem {
+  label: string
+  href: string
+  icon: string
+}
+
+const navItems: NavItem[] = [
+  { label: 'Dashboard', href: '/', icon: '📊' },
+  { label: 'Analytics', href: '/analytics', icon: '📈' },
+  { label: 'DSA Tracker', href: '/dsa', icon: '🎯' },
+  { label: 'Goals', href: '/goals', icon: '🏆' },
+  { label: 'Settings', href: '/settings', icon: '⚙️' },
+]
 
 export const Sidebar = () => {
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const location = useLocation()
+
+  const isActive = (href: string) => {
+    return location.pathname === href
+  }
+
   return (
-    <aside className="w-64 bg-slate-900 dark:bg-slate-950 text-white p-6 flex flex-col">
-      <div className="mb-12">
-        <h1 className="text-2xl font-bold text-indigo-400 dark:text-indigo-300">DevDash</h1>
-      </div>
+    <>
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        aria-label="Toggle navigation menu"
+        className="hidden md:hidden fixed top-4 left-4 z-40 p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+      >
+        ☰
+      </button>
 
-      <nav className="flex-1 space-y-4">
-        <Link to="/" className="block px-4 py-2 rounded hover:bg-slate-800 dark:hover:bg-slate-800 transition">
-          Dashboard
-        </Link>
-        <Link to="/analytics" className="block px-4 py-2 rounded hover:bg-slate-800 dark:hover:bg-slate-800 transition">
-          Analytics
-        </Link>
-        <Link to="/dsa" className="block px-4 py-2 rounded hover:bg-slate-800 dark:hover:bg-slate-800 transition">
-          DSA Tracker
-        </Link>
-        <Link to="/goals" className="block px-4 py-2 rounded hover:bg-slate-800 dark:hover:bg-slate-800 transition">
-          Goals
-        </Link>
-        <Link to="/settings" className="block px-4 py-2 rounded hover:bg-slate-800 dark:hover:bg-slate-800 transition">
-          Settings
-        </Link>
-      </nav>
+      {/* Mobile overlay */}
+      {isMobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-30"
+          onClick={() => setIsMobileOpen(false)}
+          role="presentation"
+        />
+      )}
 
-      <div className="text-sm text-slate-400 dark:text-slate-500 border-t border-slate-700 dark:border-slate-800 pt-4">
-        © 2026 Developer Dashboard
-      </div>
-    </aside>
+      {/* Sidebar */}
+      <aside
+        className={`fixed md:relative w-64 h-screen bg-gradient-to-b from-slate-900 to-slate-950 dark:from-slate-950 dark:to-slate-950 text-white p-6 flex flex-col transition-transform duration-300 z-40
+          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}
+      >
+        {/* Logo */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2">
+            <span className="text-3xl">🚀</span>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              DevDash
+            </h1>
+          </div>
+          <p className="text-xs text-slate-400 mt-2">Developer Productivity Hub</p>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 space-y-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              to={item.href}
+              onClick={() => setIsMobileOpen(false)}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
+                ${
+                  isActive(item.href)
+                    ? 'bg-indigo-600 text-white font-semibold shadow-lg'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }
+              `}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              <span className="text-xl">{item.icon}</span>
+              <span className="text-sm font-medium">{item.label}</span>
+            </Link>
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="border-t border-slate-700 pt-4 space-y-2">
+          <p className="text-xs text-slate-500">© 2026 Developer Dashboard</p>
+        </div>
+      </aside>
+    </>
   )
 }
 

@@ -1,20 +1,22 @@
-interface StatsCardProps {
+interface StatCardProps {
   title: string
-  value: number | string
+  value: string | number
   unit?: string
-  trend?: 'up' | 'down' | 'neutral'
   change?: number
+  trend?: 'up' | 'down' | 'neutral'
   icon?: string
+  className?: string
 }
 
-export const StatsCard = ({
+export const StatCard = ({
   title,
   value,
   unit,
-  trend = 'neutral',
   change,
+  trend = 'neutral',
   icon,
-}: StatsCardProps) => {
+  className = '',
+}: StatCardProps) => {
   const trendColor = {
     up: 'text-green-600 dark:text-green-400',
     down: 'text-red-600 dark:text-red-400',
@@ -28,13 +30,13 @@ export const StatsCard = ({
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 border-l-4 border-indigo-500 dark:border-indigo-400">
+    <div className={`bg-white dark:bg-slate-800 rounded-lg shadow p-6 ${className}`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">{title}</p>
-          <div className="mt-2 flex items-baseline">
-            <span className="text-4xl font-bold text-gray-900 dark:text-white">{value}</span>
-            {unit && <span className="ml-2 text-gray-600 dark:text-gray-400">{unit}</span>}
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-gray-900 dark:text-white">{value}</span>
+            {unit && <span className="text-gray-500 dark:text-gray-400 text-sm">{unit}</span>}
           </div>
           {change !== undefined && (
             <p className={`mt-2 text-sm font-medium ${trendColor[trend]}`}>
@@ -50,4 +52,4 @@ export const StatsCard = ({
   )
 }
 
-export default StatsCard
+export default StatCard
