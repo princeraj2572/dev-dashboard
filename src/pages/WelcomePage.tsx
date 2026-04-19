@@ -52,7 +52,7 @@ export const WelcomePage = () => {
           <div className="flex gap-4 pt-4">
             <Link
               to="/settings"
-              className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-bold hover:bg-indigo-50 transition transform hover:scale-105 shadow-lg"
+              className="bg-white dark:bg-indigo-200 text-indigo-600 dark:text-indigo-900 px-8 py-3 rounded-lg font-bold hover:bg-indigo-50 dark:hover:bg-indigo-100 transition transform hover:scale-105 shadow-lg"
             >
               Get Started →
             </Link>
@@ -60,7 +60,7 @@ export const WelcomePage = () => {
               href="https://github.com/princeraj2572/dev-dashboard"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-indigo-400 bg-opacity-30 text-white border-2 border-white px-8 py-3 rounded-lg font-bold hover:bg-opacity-50 transition"
+              className="bg-indigo-400 dark:bg-indigo-600 bg-opacity-30 dark:bg-opacity-40 text-white border-2 border-white px-8 py-3 rounded-lg font-bold hover:bg-opacity-50 dark:hover:bg-opacity-60 transition"
             >
               GitHub Repo ⭐
             </a>

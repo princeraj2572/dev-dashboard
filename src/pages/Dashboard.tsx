@@ -35,14 +35,14 @@ export const Dashboard = () => {
   if (hasNoProfiles) {
     return (
       <div className="p-8">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <h2 className="text-2xl font-bold mb-2">Hello! 👋</h2>
-          <p className="text-gray-700 mb-4">
+        <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
+          <h2 className="text-2xl font-bold mb-2 text-blue-900 dark:text-blue-100">Hello! 👋</h2>
+          <p className="text-blue-800 dark:text-blue-200 mb-4">
             To get started, please enter your GitHub and LeetCode usernames in the Settings page.
           </p>
           <a
             href="/settings"
-            className="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+            className="inline-block bg-blue-600 dark:bg-blue-700 text-white px-6 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-600 transition"
           >
             Go to Settings
           </a>
@@ -62,9 +62,9 @@ export const Dashboard = () => {
   if (githubError) {
     return (
       <div className="p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Error Loading Data</h2>
-          <p className="text-red-700">
+        <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-800 rounded-lg p-6">
+          <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">Error Loading Data</h2>
+          <p className="text-red-700 dark:text-red-200">
             Could not fetch GitHub data. Please check your token and username in Settings.
           </p>
         </div>
@@ -75,8 +75,8 @@ export const Dashboard = () => {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-4xl font-bold mb-2">Welcome, Developer! 🚀</h1>
-        <p className="text-gray-600">Track your productivity and coding progress</p>
+        <h1 className="text-4xl font-bold mb-2 dark:text-white">Welcome, Developer! 🚀</h1>
+        <p className="text-gray-600 dark:text-gray-400">Track your productivity and coding progress</p>
       </div>
 
       {/* Score Display - Prominent */}
@@ -87,10 +87,10 @@ export const Dashboard = () => {
         <StreakDisplay streak={streakData} />
 
         {/* Goals Overview */}
-        <div className="bg-white rounded-lg shadow p-8 space-y-6">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-8 space-y-6">
           <div>
-            <h3 className="text-2xl font-bold mb-2">Goals Progress</h3>
-            <p className="text-gray-600 text-sm">Stay on track with your development goals</p>
+            <h3 className="text-2xl font-bold mb-2 dark:text-white">Goals Progress</h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">Stay on track with your development goals</p>
           </div>
 
           {goals.length > 0 ? (
@@ -101,12 +101,12 @@ export const Dashboard = () => {
                 return (
                   <div key={goal.id} className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-semibold text-sm text-gray-900">{goal.title}</span>
-                      <span className="text-xs font-bold text-gray-600">
+                      <span className="font-semibold text-sm text-gray-900 dark:text-white">{goal.title}</span>
+                      <span className="text-xs font-bold text-gray-600 dark:text-gray-400">
                         {goal.current}/{goal.target}
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
                       <div
                         className={`h-2 rounded-full transition-all ${
                           isCompleted ? 'bg-green-500' : 'bg-indigo-500'
@@ -120,17 +120,17 @@ export const Dashboard = () => {
 
               <a
                 href="/goals"
-                className="inline-block mt-4 text-indigo-600 hover:text-indigo-700 text-sm font-semibold"
+                className="inline-block mt-4 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 text-sm font-semibold"
               >
                 View All Goals →
               </a>
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-600 mb-4">No goals yet</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">No goals yet</p>
               <a
                 href="/goals"
-                className="inline-block bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition font-semibold text-sm"
+                className="inline-block bg-indigo-600 dark:bg-indigo-700 text-white px-6 py-2 rounded hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-semibold text-sm"
               >
                 Create Your First Goal
               </a>
@@ -166,17 +166,17 @@ export const Dashboard = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CommitChart data={githubStats?.commitsPerDay || []} />
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-bold mb-4">Language Breakdown</h3>
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+          <h3 className="text-lg font-bold mb-4 dark:text-white">Language Breakdown</h3>
           {githubStats?.languageBreakdown && githubStats.languageBreakdown.length > 0 ? (
             <div className="space-y-3">
               {githubStats.languageBreakdown.map((lang) => (
                 <div key={lang.language}>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="font-medium">{lang.language}</span>
-                    <span className="text-gray-600">{lang.percentage.toFixed(1)}%</span>
+                    <span className="font-medium dark:text-white">{lang.language}</span>
+                    <span className="text-gray-600 dark:text-gray-400">{lang.percentage.toFixed(1)}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
                     <div
                       className="bg-indigo-500 h-2 rounded-full"
                       style={{ width: `${lang.percentage}%` }}
@@ -186,7 +186,7 @@ export const Dashboard = () => {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No language data available</p>
+            <p className="text-gray-500 dark:text-gray-400">No language data available</p>
           )}
         </div>
       </div>

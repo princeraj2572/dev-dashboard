@@ -15,15 +15,15 @@ export const ProblemDifficultyChart = ({ stats }: ProblemDifficultyChartProps) =
   const total = stats.totalSolved
   if (total === 0) {
     return (
-      <div className="bg-gray-50 rounded-lg p-8 text-center border border-dashed border-gray-300 h-80 flex items-center justify-center">
-        <p className="text-gray-600">No LeetCode problems solved yet. Time to start grinding! 💪</p>
+      <div className="bg-gray-50 dark:bg-slate-700 rounded-lg p-8 text-center border border-dashed border-gray-300 dark:border-gray-600 h-80 flex items-center justify-center\">
+        <p className="text-gray-600 dark:text-gray-400">No LeetCode problems solved yet. Time to start grinding! 💪</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 h-80">
-      <h3 className="text-lg font-bold mb-4 text-gray-900">Problem Distribution</h3>
+    <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 h-80">
+      <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white\">Problem Distribution</h3>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie

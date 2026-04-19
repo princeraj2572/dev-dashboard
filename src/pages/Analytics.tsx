@@ -16,8 +16,8 @@ export const Analytics = () => {
   if (!githubUsername && !leetcodeUsername) {
     return (
       <div className="p-8">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <p>Please set your GitHub or LeetCode username in Settings to view analytics.</p>
+        <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
+          <p className="dark:text-blue-200">Please set your GitHub or LeetCode username in Settings to view analytics.</p>
         </div>
       </div>
     )
@@ -34,8 +34,8 @@ export const Analytics = () => {
   if (githubError && githubUsername) {
     return (
       <div className="p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <p className="text-red-700">Could not fetch GitHub analytics data.</p>
+        <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-800 rounded-lg p-6">
+          <p className="text-red-700 dark:text-red-200">Could not fetch GitHub analytics data.</p>
         </div>
       </div>
     )
@@ -44,24 +44,24 @@ export const Analytics = () => {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-4xl font-bold mb-2">Analytics</h1>
-        <p className="text-gray-600">Deep dive into your algorithms & development statistics</p>
+        <h1 className="text-4xl font-bold mb-2 dark:text-white">Analytics</h1>
+        <p className="text-gray-600 dark:text-gray-400">Deep dive into your algorithms & development statistics</p>
       </div>
 
       {/* GitHub Section */}
       {githubUsername && (
         <>
           {/* Commit Trends */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-6">Commit Trends</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+            <h2 className="text-2xl font-bold mb-6 dark:text-white">Commit Trends</h2>
             <CommitChart data={githubStats?.commitsPerDay || []} />
           </div>
 
           {/* Language and Repos */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Language Distribution - Pie Chart */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-2xl font-bold mb-6">Languages Used</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+              <h2 className="text-2xl font-bold mb-6 dark:text-white">Languages Used</h2>
               {githubStats?.languageBreakdown && githubStats.languageBreakdown.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
@@ -83,26 +83,26 @@ export const Analytics = () => {
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="text-gray-500">No language data available</p>
+                <p className="text-gray-500 dark:text-gray-400">No language data available</p>
               )}
             </div>
 
             {/* Top Repositories */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-2xl font-bold mb-6">Top Repositories</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+              <h2 className="text-2xl font-bold mb-6 dark:text-white">Top Repositories</h2>
               {githubStats?.topRepos && githubStats.topRepos.length > 0 ? (
                 <div className="space-y-4">
                   {githubStats.topRepos.map((repo) => (
-                    <div key={repo.name} className="border-b pb-4">
+                    <div key={repo.name} className="border-b border-gray-200 dark:border-gray-700 pb-4">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold">{repo.name}</span>
-                        <span className="text-yellow-600 font-bold">★ {repo.stars}</span>
+                        <span className="font-semibold dark:text-white">{repo.name}</span>
+                        <span className="text-yellow-600 dark:text-yellow-400 font-bold">★ {repo.stars}</span>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500">No repository data available</p>
+                <p className="text-gray-500 dark:text-gray-400">No repository data available</p>
               )}
             </div>
           </div>
@@ -112,8 +112,8 @@ export const Analytics = () => {
       {/* LeetCode Section */}
       {leetcodeUsername && (
         <>
-          <div className="border-t pt-8">
-            <h2 className="text-3xl font-bold mb-6">Algorithm Mastery</h2>
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
+            <h2 className="text-3xl font-bold mb-6 dark:text-white">Algorithm Mastery</h2>
           </div>
 
           {/* Problem Distribution */}
@@ -121,49 +121,49 @@ export const Analytics = () => {
             <ProblemDifficultyChart stats={leetcodeStats} />
 
             {/* LeetCode Metrics */}
-            <div className="bg-white rounded-lg shadow p-6 space-y-6">
-              <h2 className="text-2xl font-bold">LeetCode Metrics</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 space-y-6">
+              <h2 className="text-2xl font-bold dark:text-white">LeetCode Metrics</h2>
 
               <div className="space-y-4">
-                <div className="border-b pb-4">
+                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">Total Solved</span>
-                    <span className="text-3xl font-bold text-indigo-600">{leetcodeStats.totalSolved}</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">Total Solved</span>
+                    <span className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{leetcodeStats.totalSolved}</span>
                   </div>
                 </div>
 
-                <div className="border-b pb-4">
+                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">Acceptance Rate</span>
-                    <span className="text-2xl font-bold text-green-600">
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">Acceptance Rate</span>
+                    <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                       {leetcodeStats.acceptanceRate.toFixed(1)}%
                     </span>
                   </div>
                 </div>
 
-                <div className="border-b pb-4">
+                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">Ranking</span>
-                    <span className="text-2xl font-bold text-purple-600">
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">Ranking</span>
+                    <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                       {leetcodeStats.ranking > 0 ? `#${leetcodeStats.ranking.toLocaleString()}` : 'N/A'}
                     </span>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-gray-700 font-medium">Problem Breakdown</span>
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">Problem Breakdown</span>
                   <div className="mt-4 space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-green-700">Easy</span>
-                      <span className="font-bold text-green-600">{leetcodeStats.easySolved}</span>
+                      <span className="text-green-700 dark:text-green-400">Easy</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">{leetcodeStats.easySolved}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-yellow-700">Medium</span>
-                      <span className="font-bold text-yellow-600">{leetcodeStats.mediumSolved}</span>
+                      <span className="text-yellow-700 dark:text-yellow-400">Medium</span>
+                      <span className="font-bold text-yellow-600 dark:text-yellow-400">{leetcodeStats.mediumSolved}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-red-700">Hard</span>
-                      <span className="font-bold text-red-600">{leetcodeStats.hardSolved}</span>
+                      <span className="text-red-700 dark:text-red-400">Hard</span>
+                      <span className="font-bold text-red-600 dark:text-red-400">{leetcodeStats.hardSolved}</span>
                     </div>
                   </div>
                 </div>

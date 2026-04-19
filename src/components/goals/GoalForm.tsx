@@ -44,7 +44,7 @@ export const GoalForm = ({ onSubmit }: GoalFormProps) => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+        className="w-full bg-indigo-600 dark:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 dark:hover:bg-indigo-600 transition flex items-center justify-center gap-2"
       >
         ➕ Create New Goal
       </button>
@@ -52,18 +52,18 @@ export const GoalForm = ({ onSubmit }: GoalFormProps) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 border-2 border-indigo-300">
-      <h3 className="text-lg font-bold mb-4">Create New Goal</h3>
+    <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 border-2 border-indigo-300 dark:border-indigo-700">
+      <h3 className="text-lg font-bold mb-4 dark:text-white">Create New Goal</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Goal Title</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Goal Title</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g., Solve LeetCode Problems"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             autoFocus
             required
           />
@@ -71,22 +71,22 @@ export const GoalForm = ({ onSubmit }: GoalFormProps) => {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Target</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target</label>
             <input
               type="number"
               value={target}
               onChange={(e) => setTarget(Math.max(1, parseInt(e.target.value)))}
               min="1"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Unit</label>
             <select
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             >
               <option>tasks</option>
               <option>hours</option>
@@ -99,12 +99,12 @@ export const GoalForm = ({ onSubmit }: GoalFormProps) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deadline</label>
           <input
             type="date"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>
 
@@ -112,13 +112,13 @@ export const GoalForm = ({ onSubmit }: GoalFormProps) => {
           <button
             type="button"
             onClick={() => setIsOpen(false)}
-            className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold transition"
+            className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-lg font-semibold transition"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg font-semibold transition"
+            className="px-6 py-2 bg-indigo-600 dark:bg-indigo-700 text-white hover:bg-indigo-700 dark:hover:bg-indigo-600 rounded-lg font-semibold transition"
           >
             Create Goal
           </button>
