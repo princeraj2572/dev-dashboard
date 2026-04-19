@@ -14,6 +14,15 @@ export const Settings = () => {
     setTimeout(() => setSavedMessage(''), 3000)
   }
 
+  const handleClearSessions = () => {
+    if (window.confirm('Are you sure you want to clear all coding sessions? This cannot be undone.')) {
+      localStorage.removeItem('codingTimerState')
+      setSavedMessage('All coding sessions cleared!')
+      setTimeout(() => setSavedMessage(''), 3000)
+      window.location.reload()
+    }
+  }
+
   return (
     <div className="p-8 max-w-2xl">
       <div className="mb-8">
@@ -92,6 +101,23 @@ export const Settings = () => {
           </div>
         </div>
 
+        {/* Coding Timer Settings */}
+        <div className="border-t pt-8">
+          <h2 className="text-2xl font-bold mb-4">Coding Timer</h2>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Session Management</label>
+            <button
+              onClick={handleClearSessions}
+              className="w-full bg-red-100 text-red-700 px-4 py-3 rounded-lg font-semibold hover:bg-red-200 transition border border-red-300"
+            >
+              🗑️ Clear All Coding Sessions
+            </button>
+            <p className="mt-2 text-sm text-gray-500">
+              This will delete all your saved coding sessions. This action cannot be undone.
+            </p>
+          </div>
+        </div>
+
         {/* Theme Settings */}
         <div className="border-t pt-8">
           <h2 className="text-2xl font-bold mb-4">Appearance</h2>
@@ -128,6 +154,7 @@ export const Settings = () => {
           <li>Enter your GitHub username above</li>
           <li>Click Save Settings</li>
           <li>Go to Dashboard to see your stats!</li>
+          <li>Use the Coding Timer on DSA Tracker page to track your practice sessions</li>
         </ol>
       </div>
     </div>
