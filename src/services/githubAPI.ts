@@ -1,6 +1,11 @@
-import axios from 'axios'
+import { createApiClient, validateCredentials, callApi, getErrorMessage } from './apiClient'
 
 const GITHUB_API_BASE = 'https://api.github.com'
+const githubClient = createApiClient({
+  maxRetries: 3,
+  retryDelay: 1000,
+  retryableStatuses: [408, 429, 503, 504],
+})
 
 interface GithubEvent {
   type: string
@@ -21,35 +26,45 @@ interface GithubRepo {
 }
 
 export const fetchUserEvents = async (username: string, token: string) => {
-  try {
-    const response = await axios.get<GithubEvent[]>(
-      `${GITHUB_API_BASE}/users/${username}/events`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { per_page: 100 },
-      }
-    )
-    return response.data
-  } catch (error) {
-    console.error('GitHub events fetch failed:', error)
+  // Validate credentials before making request
+  const validation = validateCredentials(username, token)
+  if (!validation.isValid) {
+    console.error('GitHub validation failed:', validation.error)
     return null
   }
+
+  return callApi(
+    () =>
+      githubClient
+        .get<GithubEvent[]>(`${GITHUB_API_BASE}/users/${username}/events`, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { per_page: 100 },
+          timeout: 10000,
+        })
+        .then((r) => r.data),
+    'GitHub Events'
+  )
 }
 
 export const fetchUserRepos = async (username: string, token: string) => {
-  try {
-    const response = await axios.get<GithubRepo[]>(
-      `${GITHUB_API_BASE}/users/${username}/repos`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { per_page: 100, sort: 'stars', direction: 'desc' },
-      }
-    )
-    return response.data
-  } catch (error) {
-    console.error('GitHub repos fetch failed:', error)
+  // Validate credentials before making request
+  const validation = validateCredentials(username, token)
+  if (!validation.isValid) {
+    console.error('GitHub validation failed:', validation.error)
     return null
   }
+
+  return callApi(
+    () =>
+      githubClient
+        .get<GithubRepo[]>(`${GITHUB_API_BASE}/users/${username}/repos`, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { per_page: 100, sort: 'stars', direction: 'desc' },
+          timeout: 10000,
+        })
+        .then((r) => r.data),
+    'GitHub Repos'
+  )
 }
 
 export const calculateGithubStats = (events: GithubEvent[] | null, repos: GithubRepo[] | null) => {

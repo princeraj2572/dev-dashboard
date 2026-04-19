@@ -1,7 +1,12 @@
-import axios from 'axios'
+import { createApiClient, validateCredentials, callApi } from './apiClient'
 import type { LeetCodeStats } from '@/types'
 
 const LEETCODE_API_BASE = 'https://leetcode-api-fxckjtno.vercel.app'
+const leetcodeClient = createApiClient({
+  maxRetries: 2,
+  retryDelay: 2000,
+  retryableStatuses: [408, 429, 503, 504],
+})
 
 export interface LeetCodeProblem {
   id: string
@@ -22,24 +27,35 @@ export interface LeetCodeProfile {
 }
 
 export const fetchLeetCodeProfile = async (username: string): Promise<LeetCodeProfile | null> => {
-  try {
-    const response = await axios.get(`${LEETCODE_API_BASE}/${username}`)
-    const data = response.data
-
-    return {
-      username: data.username || username,
-      totalSolved: data.totalSolved || 0,
-      easySolved: data.easySolved || 0,
-      mediumSolved: data.mediumSolved || 0,
-      hardSolved: data.hardSolved || 0,
-      totalQuestions: data.totalQuestions || 0,
-      acceptanceRate: parseFloat(data.acceptanceRate) || 0,
-      ranking: data.ranking || 0,
-    }
-  } catch (error) {
-    console.error('Failed to fetch LeetCode profile:', error)
+  // Validate username
+  const validation = validateCredentials(username)
+  if (!validation.isValid) {
+    console.error('LeetCode validation failed:', validation.error)
     return null
   }
+
+  return callApi(
+    () =>
+      leetcodeClient
+        .get(`${LEETCODE_API_BASE}/${username}`, {
+          timeout: 15000,
+        })
+        .then((response) => {
+          const data = response.data
+
+          return {
+            username: data.username || username,
+            totalSolved: data.totalSolved || 0,
+            easySolved: data.easySolved || 0,
+            mediumSolved: data.mediumSolved || 0,
+            hardSolved: data.hardSolved || 0,
+            totalQuestions: data.totalQuestions || 0,
+            acceptanceRate: parseFloat(data.acceptanceRate) || 0,
+            ranking: data.ranking || 0,
+          }
+        }),
+    'LeetCode Profile'
+  )
 }
 
 export const calculateLeetCodeStats = (profile: LeetCodeProfile | null): LeetCodeStats => {
