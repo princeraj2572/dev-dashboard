@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { LayoutDashboard, LineChart, Timer, Target, Settings, Sun, Moon } from 'lucide-react'
 import { useDashboardStore } from '@/store/dashboardStore'
+import GitSyncStatus from '@/components/common/GitSyncStatus'
 
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -67,6 +68,7 @@ export const Sidebar = () => {
           ))}
         </nav>
 
+        <GitSyncStatus variant="compact" />
         {themeButton}
       </aside>
 

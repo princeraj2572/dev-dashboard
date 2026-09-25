@@ -5,6 +5,7 @@ import Button from '@/components/common/Button'
 import Input from '@/components/common/Input'
 import Alert from '@/components/common/Alert'
 import PageHeader from '@/components/layout/PageHeader'
+import GitSyncStatus from '@/components/common/GitSyncStatus'
 
 const panel = 'rounded-xl border border-line bg-surface p-5 sm:p-6'
 
@@ -103,6 +104,8 @@ export const Settings = () => {
             ))}
           </div>
         </section>
+
+        <GitSyncStatus />
 
         <section className={panel} aria-labelledby="sessions-heading">
           <h2 id="sessions-heading" className="text-lg font-semibold">
