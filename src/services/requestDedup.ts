@@ -4,7 +4,7 @@
  */
 
 interface RequestCache {
-  promise: Promise<any>
+  promise: Promise<unknown>
   timestamp: number
   ttl: number
 }
@@ -15,7 +15,7 @@ const CACHE_TTL = 5000 // 5 seconds - deduplicate rapid successive calls
 /**
  * Generate a cache key from request parameters
  */
-const generateCacheKey = (method: string, url: string, params?: any): string => {
+const generateCacheKey = (method: string, url: string, params?: unknown): string => {
   const paramStr = params ? JSON.stringify(params) : ''
   return `${method}:${url}:${paramStr}`
 }
@@ -28,7 +28,7 @@ export const dedupedRequest = async <T>(
   method: string,
   url: string,
   apiCall: () => Promise<T>,
-  params?: any
+  params?: unknown
 ): Promise<T> => {
   const cacheKey = generateCacheKey(method, url, params)
   const now = Date.now()
@@ -37,7 +37,7 @@ export const dedupedRequest = async <T>(
   const cached = requestCache.get(cacheKey)
   if (cached && now - cached.timestamp < cached.ttl) {
     console.debug(`[Dedup] Reusing cached request for ${cacheKey}`)
-    return cached.promise
+    return cached.promise as Promise<T>
   }
 
   // Create and cache the promise

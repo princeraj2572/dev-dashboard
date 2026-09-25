@@ -16,7 +16,7 @@ const COLORS = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 export const Analytics = () => {
   const { githubUsername, leetcodeUsername } = useDashboardStore()
   const { data: githubStats, isLoading: githubLoading, error: githubError } = useGithubData()
-  const { score: leetcodeScore, ...leetcodeStats } = useLeetCodeData()
+  const leetcodeStats = useLeetCodeData()
 
   if (!githubUsername && !leetcodeUsername) {
     return (

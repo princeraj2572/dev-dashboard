@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import type { ReactNode } from 'react'
 
 interface InputProps {
@@ -31,7 +32,7 @@ export const Input = ({
   ariaLabel,
   ariaDescribedBy,
 }: InputProps) => {
-  const inputId = `input-${Math.random().toString(36).substr(2, 9)}`
+  const inputId = useId()
   const errorId = `error-${inputId}`
   const helperId = `helper-${inputId}`
 

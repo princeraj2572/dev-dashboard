@@ -1,10 +1,15 @@
-import axios, { type AxiosError, type AxiosInstance, AxiosError as AxiosErrorClass } from 'axios'
+import axios, { type AxiosError, type InternalAxiosRequestConfig, type AxiosInstance, AxiosError as AxiosErrorClass } from 'axios'
 
 interface RetryConfig {
   maxRetries: number
   retryDelay: number
   backoffMultiplier: number
   retryableStatuses: number[]
+}
+
+interface TrackedConfig extends InternalAxiosRequestConfig {
+  requestTimestamp?: number
+  retryCount?: number
 }
 
 interface RateLimitError extends Error {
@@ -29,7 +34,7 @@ export const createApiClient = (config?: Partial<RetryConfig>): AxiosInstance =>
   // Request interceptor - validate token presence for authenticated endpoints
   client.interceptors.request.use((config) => {
     // Add request timestamp for rate limit tracking
-    ;(config as any).requestTimestamp = Date.now()
+    (config as TrackedConfig).requestTimestamp = Date.now()
     return config
   })
 
@@ -37,7 +42,7 @@ export const createApiClient = (config?: Partial<RetryConfig>): AxiosInstance =>
   client.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
-      const config = error.config as any
+      const config = error.config as TrackedConfig
 
       // Handle 429 (Too Many Requests)
       if (error.response?.status === 429) {
@@ -112,7 +117,7 @@ export const callApi = async <T>(
     // Log to monitoring service in production (browser environment)
     // In Node.js/SSR, process would be available
     try {
-      // @ts-ignore - browser won't have process, but checking for safety
+      // @ts-expect-error - browser won't have process, but checking for safety
       if (typeof window === 'undefined' && process.env.NODE_ENV === 'production') {
         // Send to monitoring/logging service
         console.log(`[PRODUCTION ERROR] ${context}: ${errorMessage}`)

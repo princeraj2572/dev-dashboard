@@ -29,10 +29,7 @@ export const Dashboard = () => {
   const { goals, getGoalProgress } = useGoals()
 
   // Calculate combined score
-  const combinedScore = calculateTotalScore(githubStats || null, {
-    ...leetcodeStats,
-    score: leetcodeScore,
-  } as any)
+  const combinedScore = calculateTotalScore(githubStats || null, leetcodeStats)
 
   // Calculate streaks from coding sessions
   const streakData = calculateStreaks(sessions)
