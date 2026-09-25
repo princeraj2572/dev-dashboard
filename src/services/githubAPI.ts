@@ -26,7 +26,7 @@ interface GithubRepo {
   language: string | null
 }
 
-export const fetchUserEvents = async (username: string, token: string) => {
+export const fetchUserEvents = async (username: string, token?: string) => {
   // Validate credentials before making request
   const validation = validateCredentials(username, token)
   if (!validation.isValid) {
@@ -42,7 +42,7 @@ export const fetchUserEvents = async (username: string, token: string) => {
         () =>
           githubClient
             .get<GithubEvent[]>(`${GITHUB_API_BASE}/users/${username}/events`, {
-              headers: { Authorization: `Bearer ${token}` },
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
               params: { per_page: 100 },
               timeout: 10000,
             })
@@ -53,7 +53,7 @@ export const fetchUserEvents = async (username: string, token: string) => {
   )
 }
 
-export const fetchUserRepos = async (username: string, token: string) => {
+export const fetchUserRepos = async (username: string, token?: string) => {
   // Validate credentials before making request
   const validation = validateCredentials(username, token)
   if (!validation.isValid) {
@@ -65,7 +65,7 @@ export const fetchUserRepos = async (username: string, token: string) => {
     () =>
       githubClient
         .get<GithubRepo[]>(`${GITHUB_API_BASE}/users/${username}/repos`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
           params: { per_page: 100, sort: 'stars', direction: 'desc' },
           timeout: 10000,
         })

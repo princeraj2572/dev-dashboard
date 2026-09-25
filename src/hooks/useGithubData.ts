@@ -15,7 +15,7 @@ export const useGithubData = () => {
       return calculateGithubStats(events, repos)
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
-    enabled: !!githubUsername && !!token,
+    enabled: !!githubUsername, // token is optional; unauthenticated requests are rate limited
     retry: 1,
   })
 }
