@@ -49,12 +49,12 @@ export const calculateTotalScore = (
 }
 
 export const getScoreRank = (score: number): string => {
-  if (score >= 1000) return '🏆 Legend'
-  if (score >= 750) return '⭐ Master'
-  if (score >= 500) return '💎 Advanced'
-  if (score >= 250) return '🔥 Intermediate'
-  if (score >= 100) return '📈 Beginner'
-  return '🌱 Starting'
+  if (score >= 1000) return 'Legend'
+  if (score >= 750) return 'Master'
+  if (score >= 500) return 'Advanced'
+  if (score >= 250) return 'Intermediate'
+  if (score >= 100) return 'Beginner'
+  return 'Getting started'
 }
 
 export const getScoreColor = (score: number): string => {

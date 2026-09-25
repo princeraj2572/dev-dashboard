@@ -1,4 +1,3 @@
-import { getStreakBadge } from '@/utils/streakCalculator'
 import type { StreakData } from '@/utils/streakCalculator'
 
 interface StreakDisplayProps {
@@ -6,59 +5,60 @@ interface StreakDisplayProps {
 }
 
 export const StreakDisplay = ({ streak }: StreakDisplayProps) => {
-  const badge = getStreakBadge(streak.currentStreak)
+  const filled = Math.min(streak.currentStreak, 7)
+  const message =
+    streak.currentStreak === 0
+      ? 'Log a coding session today to start a streak.'
+      : streak.currentStreak >= streak.longestStreak
+        ? 'This is your longest streak yet.'
+        : `${streak.longestStreak - streak.currentStreak} more ${
+            streak.longestStreak - streak.currentStreak === 1 ? 'day' : 'days'
+          } to beat your best.`
 
   return (
-    <div className={`bg-gradient-to-br ${badge.color} rounded-2xl shadow-xl p-8 md:p-12 text-white overflow-hidden relative`}>
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full -ml-24 -mb-24" />
+    <section aria-label="Coding streak" className="rounded-xl border border-line bg-surface p-5 sm:p-6">
+      <h2 className="text-lg font-semibold">Streak</h2>
 
-      <div className="relative z-10 space-y-6">
-        {/* Header with Badge */}
-        <div className="text-center">
-          <p className="text-5xl mb-3 animate-bounce">{badge.icon}</p>
-          <p className="text-sm font-bold opacity-90 uppercase tracking-wide">{badge.label} Streak</p>
-        </div>
+      <p className="mt-4 flex items-baseline gap-2">
+        <span className="font-display text-7xl font-extrabold leading-none tracking-tight tabular-nums">
+          {streak.currentStreak}
+        </span>
+        <span className="text-subtle">{streak.currentStreak === 1 ? 'day' : 'days'} in a row</span>
+      </p>
 
-        {/* Current Streak */}
-        <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl py-8 px-4 border border-white/20">
-          <p className="text-sm opacity-75 font-semibold mb-2 uppercase tracking-wide">Current Streak</p>
-          <p className="text-7xl font-bold tracking-tight">{streak.currentStreak}</p>
-          <p className="text-sm opacity-75 mt-2 font-medium">days</p>
-        </div>
-
-        {/* Longest Streak */}
-        <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 text-center border border-white/20">
-          <p className="text-xs opacity-75 font-semibold mb-2 uppercase tracking-wide">Personal Best</p>
-          <p className="text-4xl font-bold">{streak.longestStreak}</p>
-          <p className="text-xs opacity-75 mt-1 font-medium">day streak</p>
-        </div>
-
-        {/* Last Activity */}
-        {streak.lastActivityDate && (
-          <div className="text-center text-sm opacity-90">
-            <p className="font-semibold">Last Active</p>
-            <p className="opacity-75">{streak.lastActivityDate}</p>
-          </div>
-        )}
-
-        {/* Motivational Message */}
-        {streak.currentStreak === 0 ? (
-          <div className="text-center text-sm font-semibold">
-            🚀 Start your first session today!
-          </div>
-        ) : streak.currentStreak >= 30 ? (
-          <div className="text-center text-sm font-semibold">
-            🎉 You're on fire! Keep it up!
-          </div>
-        ) : (
-          <div className="text-center text-sm font-semibold">
-            💪 Keep the momentum going!
-          </div>
-        )}
+      <div
+        className="mt-5 grid grid-cols-7 gap-1.5"
+        role="img"
+        aria-label={`${filled} of the last 7 days logged`}
+      >
+        {Array.from({ length: 7 }, (_, i) => (
+          <span
+            key={i}
+            className={`aspect-[3/2] rounded-md ${i < filled ? 'bg-brand' : 'bg-cell-0'}`}
+          />
+        ))}
       </div>
-    </div>
+
+      <p className="mt-4 text-sm text-subtle">{message}</p>
+
+      <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-4 text-sm">
+        <div>
+          <dt className="text-subtle">Best streak</dt>
+          <dd className="font-display text-xl font-bold tabular-nums">{streak.longestStreak} days</dd>
+        </div>
+        <div>
+          <dt className="text-subtle">Last session</dt>
+          <dd className="font-display text-xl font-bold">
+            {streak.lastActivityDate
+              ? new Date(streak.lastActivityDate).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                })
+              : 'None yet'}
+          </dd>
+        </div>
+      </dl>
+    </section>
   )
 }
 

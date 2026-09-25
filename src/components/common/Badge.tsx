@@ -14,20 +14,22 @@ export const Badge = ({
   className = '',
 }: BadgeProps) => {
   const variantStyles = {
-    default: 'bg-gray-150 dark:bg-slate-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-slate-600',
-    success: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-600',
-    warning: 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-600',
-    error: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-600',
-    info: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-600',
+    default: 'bg-sunken text-subtle',
+    success: 'bg-brand-soft text-brand',
+    info: 'bg-brand-soft text-brand',
+    warning: 'bg-amber-soft text-amber',
+    error: 'bg-danger-soft text-danger',
   }
 
   const sizeStyles = {
-    sm: 'px-3 py-1 text-xs font-semibold',
-    md: 'px-4 py-1.5 text-sm font-semibold',
+    sm: 'px-2 py-0.5 text-xs',
+    md: 'px-2.5 py-1 text-sm',
   }
 
   return (
-    <span className={`rounded-full inline-block transition-colors duration-200 ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}>
+    <span
+      className={`inline-block rounded-md font-semibold tabular-nums ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+    >
       {children}
     </span>
   )

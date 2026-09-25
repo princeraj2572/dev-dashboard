@@ -39,14 +39,22 @@ export const Input = ({
   return (
     <div className={className}>
       {label && (
-        <label htmlFor={inputId} className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
+        <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium">
           {label}
-          {required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
+          {required && (
+            <span className="ml-1 text-danger" aria-label="required">
+              *
+            </span>
+          )}
         </label>
       )}
 
-      <div className="relative group">
-        {icon && <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">{icon}</div>}
+      <div className="relative">
+        {icon && (
+          <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle [&_svg]:size-4">
+            {icon}
+          </div>
+        )}
         <input
           id={inputId}
           type={type}
@@ -54,31 +62,24 @@ export const Input = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
+          required={required}
           aria-label={ariaLabel}
+          aria-invalid={error ? true : undefined}
           aria-describedby={ariaDescribedBy || (error ? errorId : helperText ? helperId : undefined)}
-          className={`w-full px-4 py-3 border-2 rounded-lg transition-all duration-200
-            ${icon ? 'pl-11' : ''}
-            ${error 
-              ? 'border-red-500 focus:border-red-600 focus:ring-2 focus:ring-red-500/20 dark:border-red-500 dark:focus:border-red-400' 
-              : 'border-gray-300 dark:border-gray-600 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 dark:focus:border-indigo-400 dark:focus:ring-indigo-500/30'
-            }
-            bg-white dark:bg-slate-700 dark:text-white
-            focus:outline-none
-            disabled:bg-gray-100 dark:disabled:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50
-            placeholder:text-gray-400 dark:placeholder:text-gray-500
-          `}
+          className={`h-11 w-full rounded-lg border bg-surface px-3 text-base text-ink transition-colors placeholder:text-subtle/70 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25 disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:text-sm ${
+            icon ? 'pl-9' : ''
+          } ${error ? 'border-danger' : 'border-line'}`}
         />
       </div>
 
       {error && (
-        <p id={errorId} className="mt-2 text-sm font-medium text-red-600 dark:text-red-400 flex items-center gap-1">
-          <span aria-hidden="true">⚠️</span>
+        <p id={errorId} className="mt-1.5 text-sm text-danger">
           {error}
         </p>
       )}
 
       {helperText && !error && (
-        <p id={helperId} className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <p id={helperId} className="mt-1.5 text-sm text-subtle">
           {helperText}
         </p>
       )}

@@ -1,19 +1,28 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import type { Goal } from '@/types'
+import Button from '@/components/common/Button'
 
 interface GoalFormProps {
   onSubmit: (goal: Omit<Goal, 'id'>) => void
 }
 
+const defaultDeadline = () => {
+  const date = new Date()
+  date.setDate(date.getDate() + 30)
+  return date.toISOString().split('T')[0]
+}
+
+const fieldClass =
+  'h-11 w-full rounded-lg border border-line bg-surface px-3 text-base text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25 sm:h-10 sm:text-sm'
+
+const units = ['tasks', 'hours', 'commits', 'problems', 'days', 'projects']
+
 export const GoalForm = ({ onSubmit }: GoalFormProps) => {
   const [title, setTitle] = useState('')
   const [target, setTarget] = useState(10)
   const [unit, setUnit] = useState('tasks')
-  const [deadline, setDeadline] = useState(() => {
-    const date = new Date()
-    date.setDate(date.getDate() + 30)
-    return date.toISOString().split('T')[0]
-  })
+  const [deadline, setDeadline] = useState(defaultDeadline)
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -28,103 +37,93 @@ export const GoalForm = ({ onSubmit }: GoalFormProps) => {
       deadline,
     })
 
-    // Reset form
     setTitle('')
     setTarget(10)
     setUnit('tasks')
-    setDeadline(() => {
-      const date = new Date()
-      date.setDate(date.getDate() + 30)
-      return date.toISOString().split('T')[0]
-    })
+    setDeadline(defaultDeadline())
     setIsOpen(false)
   }
 
   if (!isOpen) {
     return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full bg-indigo-600 dark:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 dark:hover:bg-indigo-600 transition flex items-center justify-center gap-2"
-      >
-        ➕ Create New Goal
-      </button>
+      <Button onClick={() => setIsOpen(true)}>
+        <Plus aria-hidden="true" />
+        New goal
+      </Button>
     )
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 border-2 border-indigo-300 dark:border-indigo-700">
-      <h3 className="text-lg font-bold mb-4 dark:text-white">Create New Goal</h3>
+    <form
+      onSubmit={handleSubmit}
+      className="w-full rounded-xl border border-line bg-surface p-5 sm:p-6"
+      aria-label="New goal"
+    >
+      <h2 className="text-lg font-semibold">New goal</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Goal Title</label>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <label htmlFor="goal-title" className="mb-1.5 block text-sm font-medium">
+            What do you want to achieve?
+          </label>
           <input
+            id="goal-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g., Solve LeetCode Problems"
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="Solve 20 LeetCode problems"
+            className={fieldClass}
             autoFocus
             required
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target</label>
-            <input
-              type="number"
-              value={target}
-              onChange={(e) => setTarget(Math.max(1, parseInt(e.target.value)))}
-              min="1"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Unit</label>
-            <select
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            >
-              <option>tasks</option>
-              <option>hours</option>
-              <option>commits</option>
-              <option>problems</option>
-              <option>days</option>
-              <option>projects</option>
-            </select>
-          </div>
-        </div>
-
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deadline</label>
+          <label htmlFor="goal-target" className="mb-1.5 block text-sm font-medium">
+            Target
+          </label>
           <input
-            type="date"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            id="goal-target"
+            type="number"
+            value={target}
+            onChange={(e) => setTarget(Math.max(1, parseInt(e.target.value, 10) || 1))}
+            min="1"
+            className={fieldClass}
           />
         </div>
 
-        <div className="flex gap-2 justify-end">
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-lg font-semibold transition"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-indigo-600 dark:bg-indigo-700 text-white hover:bg-indigo-700 dark:hover:bg-indigo-600 rounded-lg font-semibold transition"
-          >
-            Create Goal
-          </button>
+        <div>
+          <label htmlFor="goal-unit" className="mb-1.5 block text-sm font-medium">
+            Unit
+          </label>
+          <select id="goal-unit" value={unit} onChange={(e) => setUnit(e.target.value)} className={fieldClass}>
+            {units.map((u) => (
+              <option key={u}>{u}</option>
+            ))}
+          </select>
         </div>
-      </form>
-    </div>
+
+        <div className="sm:col-span-2">
+          <label htmlFor="goal-deadline" className="mb-1.5 block text-sm font-medium">
+            Deadline
+          </label>
+          <input
+            id="goal-deadline"
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className={fieldClass}
+          />
+        </div>
+      </div>
+
+      <div className="mt-5 flex justify-end gap-2">
+        <Button variant="secondary" onClick={() => setIsOpen(false)}>
+          Cancel
+        </Button>
+        <Button type="submit">Create goal</Button>
+      </div>
+    </form>
   )
 }
 

@@ -2,10 +2,8 @@ import { useCodingTimer } from '@/hooks/useCodingTimer'
 import { TimerDisplay } from '@/components/timer/TimerDisplay'
 import { StartStopButton } from '@/components/timer/StartStopButton'
 import { CodingSessionList } from '@/components/timer/CodingSessionList'
-import Section from '@/components/common/Section'
-import HeroSection from '@/components/common/HeroSection'
-import MetricCard from '@/components/cards/MetricCard'
-import GlassCard from '@/components/cards/GlassCard'
+import MetricStrip from '@/components/cards/MetricStrip'
+import PageHeader from '@/components/layout/PageHeader'
 
 export const DSATracker = () => {
   const {
@@ -21,68 +19,39 @@ export const DSATracker = () => {
     getAverageSessionMinutes,
   } = useCodingTimer()
 
-  const todaySessions = sessions.filter((s) => new Date(s.end).toDateString() === new Date().toDateString())
-  const todayMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0) / 60
+  const todayString = new Date().toDateString()
+  const todayMinutes =
+    sessions.filter((s) => new Date(s.end).toDateString() === todayString).reduce((sum, s) => sum + s.duration, 0) / 60
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50/30 to-slate-50 dark:from-slate-900 dark:via-cyan-950/20 dark:to-slate-900">
-      {/* Hero Header */}
-      <HeroSection
-        title="⏱️ Coding Timer & DSA Tracker"
-        subtitle="Track your coding sessions and DSA practice time"
-        description="Build consistent habits and monitor your progress towards mastery."
-        backgroundVariant="info"
+    <>
+      <PageHeader
+        title="Coding timer"
+        description="Time your DSA practice and project work. Finished sessions build your streak."
       />
 
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-8 animate-fade-in">
-        {/* Timer Display */}
-        <GlassCard title="Session Timer">
-          <TimerDisplay elapsedSeconds={elapsedSeconds} formatTime={formatTime} />
-        </GlassCard>
-
-        {/* Control Buttons */}
-        <StartStopButton isRunning={isRunning} onStart={startTimer} onStop={stopTimer} onReset={resetTimer} />
-
-        {/* Quick Stats */}
-        {sessions.length > 0 && (
-          <div>
-            <Section title="📊 Your Stats" subtitle="Coding session metrics" />
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 mt-6">
-              <MetricCard
-                label="Total Hours"
-                value={getTotalHours().toFixed(1)}
-                icon="⏳"
-                trend={{ direction: 'up', percentage: 10 }}
-              />
-
-              <MetricCard
-                label="Avg Session"
-                value={getAverageSessionMinutes().toFixed(0)}
-                icon="📈"
-                trend={{ direction: 'up', percentage: 5 }}
-              />
-
-              <MetricCard
-                label="Sessions"
-                value={sessions.length}
-                icon="📋"
-                trend={{ direction: 'up', percentage: 3 }}
-              />
-
-              <MetricCard
-                label="Today"
-                value={todayMinutes < 1 ? '0' : todayMinutes.toFixed(0)}
-                icon="🔥"
-                trend={todayMinutes > 0 ? { direction: 'up', percentage: 5 } : undefined}
-              />
-            </div>
+      <div className="space-y-6">
+        <section aria-label="Session timer" className="rounded-xl border border-line bg-surface p-5 sm:p-8">
+          <TimerDisplay elapsedSeconds={elapsedSeconds} formatTime={formatTime} isRunning={isRunning} />
+          <div className="mt-4">
+            <StartStopButton isRunning={isRunning} onStart={startTimer} onStop={stopTimer} onReset={resetTimer} />
           </div>
+        </section>
+
+        {sessions.length > 0 && (
+          <MetricStrip
+            items={[
+              { label: 'Today', value: `${Math.round(todayMinutes)}m` },
+              { label: 'Sessions', value: sessions.length },
+              { label: 'Total time', value: `${getTotalHours().toFixed(1)}h` },
+              { label: 'Average session', value: `${getAverageSessionMinutes().toFixed(0)}m` },
+            ]}
+          />
         )}
 
-        {/* Sessions List */}
         <CodingSessionList sessions={sessions} formatTime={formatTime} onClear={clearSessions} />
       </div>
-    </div>
+    </>
   )
 }
 

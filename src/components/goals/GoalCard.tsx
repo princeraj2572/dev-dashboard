@@ -1,4 +1,6 @@
+import { Minus, Plus, Trash2, Check } from 'lucide-react'
 import type { Goal } from '@/types'
+import ProgressBar from '@/components/common/ProgressBar'
 
 interface GoalCardProps {
   goal: Goal
@@ -8,80 +10,83 @@ interface GoalCardProps {
   isCompleted: boolean
 }
 
-export const GoalCard = ({ goal, progress, onUpdate, onDelete, isCompleted }: GoalCardProps) => {
-  const handleIncrease = () => {
-    onUpdate(Math.min(goal.current + 1, goal.target))
-  }
+const daysLeft = (deadline: string) => {
+  const end = new Date(deadline)
+  end.setHours(23, 59, 59, 999)
+  return Math.ceil((end.getTime() - Date.now()) / 86400000)
+}
 
-  const handleDecrease = () => {
-    onUpdate(Math.max(goal.current - 1, 0))
-  }
+const iconButton =
+  'grid size-11 place-items-center rounded-lg border border-line text-ink transition-colors hover:bg-sunken disabled:cursor-not-allowed disabled:opacity-40 sm:size-9'
+
+export const GoalCard = ({ goal, progress, onUpdate, onDelete, isCompleted }: GoalCardProps) => {
+  const remaining = daysLeft(goal.deadline)
+  const deadlineText = isCompleted
+    ? 'Due'
+    : remaining < 0
+      ? `Overdue by ${-remaining} ${remaining === -1 ? 'day' : 'days'}`
+      : remaining === 0
+        ? 'Due today'
+        : `${remaining} ${remaining === 1 ? 'day' : 'days'} left`
 
   return (
-    <div
-      className={`rounded-lg shadow p-6 border-2 transition ${
-        isCompleted
-          ? 'bg-green-50 dark:bg-green-900 border-green-300 dark:border-green-700'
-          : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-gray-700'
-      }`}
-    >
-      <div className="space-y-4">
-        {/* Header */}
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">{goal.title}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {goal.current} / {goal.target} {goal.unit}
-            </p>
-          </div>
-          {isCompleted && <span className="text-2xl">✅</span>}
-        </div>
-
-        {/* Progress Bar */}
-        <div className="space-y-2">
-          <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all ${
-                isCompleted ? 'bg-green-500' : 'bg-indigo-500'
-              }`}
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <p className="text-xs text-gray-600 dark:text-gray-400 text-right">{progress.toFixed(0)}%</p>
-        </div>
-
-        {/* Deadline */}
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          <p>📅 Deadline: {new Date(goal.deadline).toLocaleDateString()}</p>
-        </div>
-
-        {/* Controls */}
-        <div className="flex gap-2 justify-between">
-          <div className="flex gap-2">
-            <button
-              onClick={handleDecrease}
-              disabled={goal.current === 0}
-              className="px-3 py-1 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 disabled:opacity-50 rounded text-sm font-semibold transition dark:text-white"
-            >
-              −
-            </button>
-            <button
-              onClick={handleIncrease}
-              disabled={goal.current >= goal.target}
-              className="px-3 py-1 bg-indigo-600 dark:bg-indigo-700 hover:bg-indigo-700 dark:hover:bg-indigo-600 disabled:bg-green-600 disabled:opacity-100 text-white rounded text-sm font-semibold transition"
-            >
-              +
-            </button>
-          </div>
-          <button
-            onClick={onDelete}
-            className="px-4 py-1 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900 rounded text-sm font-semibold transition"
+    <article className="rounded-xl border border-line bg-surface p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="truncate text-lg font-semibold">{goal.title}</h3>
+          <p
+            className={`text-sm ${!isCompleted && remaining < 0 ? 'text-danger' : 'text-subtle'}`}
           >
-            Delete
+            {deadlineText}, {new Date(goal.deadline).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+          </p>
+        </div>
+        {isCompleted && (
+          <span className="grid size-7 shrink-0 place-items-center rounded-full bg-brand text-brand-ink">
+            <Check className="size-4" aria-label="Completed" />
+          </span>
+        )}
+      </div>
+
+      <p className="font-display mt-5 flex items-baseline gap-1.5 tabular-nums">
+        <span className="text-4xl font-bold leading-none">{goal.current}</span>
+        <span className="text-subtle">
+          of {goal.target} {goal.unit}
+        </span>
+      </p>
+
+      <ProgressBar value={progress} max={100} label={goal.title} className="mt-3" />
+
+      <div className="mt-5 flex items-center justify-between">
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => onUpdate(Math.max(goal.current - 1, 0))}
+            disabled={goal.current === 0}
+            aria-label={`Decrease ${goal.title}`}
+            className={iconButton}
+          >
+            <Minus className="size-4" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => onUpdate(Math.min(goal.current + 1, goal.target))}
+            disabled={goal.current >= goal.target}
+            aria-label={`Increase ${goal.title}`}
+            className={iconButton}
+          >
+            <Plus className="size-4" aria-hidden="true" />
           </button>
         </div>
+        <button
+          type="button"
+          onClick={onDelete}
+          aria-label={`Delete ${goal.title}`}
+          className="grid size-11 place-items-center rounded-lg text-subtle transition-colors hover:bg-danger-soft hover:text-danger sm:size-9"
+        >
+          <Trash2 className="size-4" aria-hidden="true" />
+        </button>
       </div>
-    </div>
+    </article>
   )
 }
 

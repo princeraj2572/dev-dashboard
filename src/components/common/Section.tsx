@@ -8,23 +8,17 @@ interface SectionProps {
   className?: string
 }
 
-export const Section = ({
-  title,
-  subtitle,
-  children,
-  action,
-  className = '',
-}: SectionProps) => {
+export const Section = ({ title, subtitle, children, action, className = '' }: SectionProps) => {
   return (
     <section className={className}>
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h2>
-          {subtitle && <p className="text-gray-600 dark:text-gray-400 mt-1">{subtitle}</p>}
+      <div className="mb-4 flex items-end justify-between gap-4">
+        <div className="min-w-0">
+          <h2 className="text-lg font-semibold leading-snug">{title}</h2>
+          {subtitle && <p className="text-sm text-subtle">{subtitle}</p>}
         </div>
-        {action && <div>{action}</div>}
+        {action}
       </div>
-      {children && children}
+      {children}
     </section>
   )
 }

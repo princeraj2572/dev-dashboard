@@ -1,3 +1,6 @@
+import { Play, Square, RotateCcw } from 'lucide-react'
+import Button from '@/components/common/Button'
+
 interface StartStopButtonProps {
   isRunning: boolean
   onStart: () => void
@@ -7,29 +10,23 @@ interface StartStopButtonProps {
 
 export const StartStopButton = ({ isRunning, onStart, onStop, onReset }: StartStopButtonProps) => {
   return (
-    <div className="flex gap-4 justify-center">
+    <div className="flex flex-wrap gap-3">
       {!isRunning ? (
-        <button
-          onClick={onStart}
-          className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition flex items-center gap-2"
-        >
-          ▶ Start Session
-        </button>
+        <Button size="lg" onClick={onStart}>
+          <Play aria-hidden="true" />
+          Start session
+        </Button>
       ) : (
-        <button
-          onClick={onStop}
-          className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-semibold transition flex items-center gap-2"
-        >
-          ⏹ Stop Session
-        </button>
+        <Button size="lg" variant="danger" onClick={onStop}>
+          <Square aria-hidden="true" />
+          Stop and save
+        </Button>
       )}
 
-      <button
-        onClick={onReset}
-        className="bg-gray-400 hover:bg-gray-500 text-white px-8 py-3 rounded-lg font-semibold transition"
-      >
-        ↻ Reset
-      </button>
+      <Button size="lg" variant="secondary" onClick={onReset}>
+        <RotateCcw aria-hidden="true" />
+        Reset
+      </Button>
     </div>
   )
 }

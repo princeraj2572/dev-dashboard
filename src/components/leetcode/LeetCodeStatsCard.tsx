@@ -1,70 +1,67 @@
 import type { LeetCodeStats } from '@/types'
+import ProblemDifficultyChart from './ProblemDifficultyChart'
 
 interface LeetCodeStatsCardProps {
   stats: LeetCodeStats
   score: number
   isLoading: boolean
+  error?: boolean
 }
 
-export const LeetCodeStatsCard = ({ stats, score, isLoading }: LeetCodeStatsCardProps) => {
-  if (isLoading) {
-    return (
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 h-80 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
-      </div>
-    )
-  }
-
+export const LeetCodeStatsCard = ({ stats, score, isLoading, error = false }: LeetCodeStatsCardProps) => {
   return (
-    <div className="bg-gradient-to-br from-orange-50 dark:from-orange-900 to-yellow-50 dark:to-yellow-900 rounded-lg shadow p-8 border border-orange-200 dark:border-orange-700">
-      <div className="space-y-6">
-        {/* Header */}
+    <section aria-label="LeetCode" className="rounded-xl border border-line bg-surface p-5 sm:p-6">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-orange-200">LeetCode Profile</h3>
-          <p className="text-gray-600 dark:text-orange-300 text-sm mt-1">DSA & Algorithm Mastery</p>
+          <h2 className="text-lg font-semibold">LeetCode</h2>
+          <p className="text-sm text-subtle">Problems solved by difficulty</p>
         </div>
-
-        {/* Score Display */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-orange-300 dark:border-orange-600">
-          <p className="text-xs text-gray-600 dark:text-gray-400 uppercase font-semibold mb-2">LeetCode Score</p>
-          <div className="text-5xl font-bold text-orange-600 dark:text-orange-400">{score}</div>
-        </div>
-
-        {/* Problem Stats Grid */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-green-100 dark:bg-green-900 rounded-lg p-4 border border-green-300 dark:border-green-700">
-            <p className="text-xs text-gray-700 dark:text-green-200 font-semibold mb-2">Easy</p>
-            <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.easySolved}</p>
-          </div>
-          <div className="bg-yellow-100 dark:bg-yellow-900 rounded-lg p-4 border border-yellow-300 dark:border-yellow-700">
-            <p className="text-xs text-gray-700 dark:text-yellow-200 font-semibold mb-2">Medium</p>
-            <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{stats.mediumSolved}</p>
-          </div>
-          <div className="bg-red-100 dark:bg-red-900 rounded-lg p-4 border border-red-300 dark:border-red-700">
-            <p className="text-xs text-gray-700 dark:text-red-200 font-semibold mb-2">Hard</p>
-            <p className="text-3xl font-bold text-red-600 dark:text-red-400">{stats.hardSolved}</p>
-          </div>
-        </div>
-
-        {/* Metrics */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center border-b border-gray-300 dark:border-gray-600 pb-3">
-            <span className="text-gray-700 dark:text-gray-300">Total Solved</span>
-            <span className="font-bold text-lg text-gray-900 dark:text-white">{stats.totalSolved}</span>
-          </div>
-          <div className="flex justify-between items-center border-b border-gray-300 dark:border-gray-600 pb-3">
-            <span className="text-gray-700 dark:text-gray-300">Acceptance Rate</span>
-            <span className="font-bold text-lg text-gray-900 dark:text-white">{stats.acceptanceRate.toFixed(1)}%</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-700 dark:text-gray-300">Ranking</span>
-            <span className="font-bold text-lg text-gray-900 dark:text-white">
-              {stats.ranking > 0 ? `#${stats.ranking.toLocaleString()}` : 'N/A'}
+        {!error && !isLoading && (
+          <p className="text-right">
+            <span className="font-display block text-3xl font-bold leading-none tabular-nums text-amber">
+              {score}
             </span>
-          </div>
-        </div>
+            <span className="text-xs text-subtle">score</span>
+          </p>
+        )}
       </div>
-    </div>
+
+      {isLoading ? (
+        <div role="status" className="py-10 text-center text-sm text-subtle">
+          Loading LeetCode stats
+        </div>
+      ) : error ? (
+        <div role="alert" className="mt-5 rounded-lg bg-amber-soft p-4 text-sm">
+          <p className="font-semibold">LeetCode stats are unavailable right now</p>
+          <p className="mt-0.5 text-subtle">
+            The service that supplies them did not respond. Your other stats are unaffected. It will retry
+            when you reload.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="mt-5">
+            <ProblemDifficultyChart stats={stats} />
+          </div>
+          <dl className="mt-5 grid grid-cols-3 gap-4 border-t border-line pt-4 text-sm">
+            <div>
+              <dt className="text-subtle">Total solved</dt>
+              <dd className="font-display text-xl font-bold tabular-nums">{stats.totalSolved}</dd>
+            </div>
+            <div>
+              <dt className="text-subtle">Acceptance</dt>
+              <dd className="font-display text-xl font-bold tabular-nums">{stats.acceptanceRate.toFixed(1)}%</dd>
+            </div>
+            <div>
+              <dt className="text-subtle">Ranking</dt>
+              <dd className="font-display text-xl font-bold tabular-nums">
+                {stats.ranking > 0 ? `#${stats.ranking.toLocaleString()}` : 'None'}
+              </dd>
+            </div>
+          </dl>
+        </>
+      )}
+    </section>
   )
 }
 

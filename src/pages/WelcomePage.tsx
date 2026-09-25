@@ -1,105 +1,72 @@
 import { Link } from 'react-router-dom'
+import { GitCommitHorizontal, Code2, Timer, Target } from 'lucide-react'
+import WeekStrip from '@/components/charts/WeekStrip'
+import type { DayActivity } from '@/utils/weekActivity'
+
+const sampleCounts = [2, 0, 5, 3, 8, 1, 4]
+
+const sampleWeek: DayActivity[] = sampleCounts.map((count, i) => {
+  const date = new Date()
+  date.setHours(0, 0, 0, 0)
+  date.setDate(date.getDate() - (6 - i))
+  return { key: date.toISOString(), weekday: date.toLocaleDateString(undefined, { weekday: 'short' }), date, count }
+})
+
+const features = [
+  { Icon: GitCommitHorizontal, title: 'GitHub', text: 'Commits, pull requests, languages and top repositories.' },
+  { Icon: Code2, title: 'LeetCode', text: 'Problems solved by difficulty, acceptance rate and ranking.' },
+  { Icon: Timer, title: 'Coding timer', text: 'Time each session and keep a daily streak going.' },
+  { Icon: Target, title: 'Goals', text: 'Set a number and a deadline, then track it to the end.' },
+]
 
 export const WelcomePage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center">
-      <div className="max-w-6xl mx-auto px-8 py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        {/* Left Side - Content */}
-        <div className="text-white space-y-8">
-          <div>
-            <h1 className="text-6xl font-bold mb-4 leading-tight">
-              Dev Dashboard 🚀
-            </h1>
-            <p className="text-xl text-indigo-100 leading-relaxed">
-              Track your coding journey comprehensively. Monitor GitHub commits, solve LeetCode problems, 
-              manage your goals, and build unstoppable coding streaks.
-            </p>
-          </div>
-
-          {/* Features */}
-          <div className="space-y-4">
-            <div className="flex gap-3 items-start">
-              <span className="text-3xl">📊</span>
-              <div>
-                <h3 className="font-bold text-lg">GitHub Analytics</h3>
-                <p className="text-indigo-100">Real-time commit history, PR tracking, and language breakdown</p>
-              </div>
-            </div>
-            <div className="flex gap-3 items-start">
-              <span className="text-3xl">🎯</span>
-              <div>
-                <h3 className="font-bold text-lg">LeetCode Integration</h3>
-                <p className="text-indigo-100">Track problem-solving progress with difficulty breakdown</p>
-              </div>
-            </div>
-            <div className="flex gap-3 items-start">
-              <span className="text-3xl">⏱️</span>
-              <div>
-                <h3 className="font-bold text-lg">Coding Timer</h3>
-                <p className="text-indigo-100">Track your coding sessions and build productive streaks</p>
-              </div>
-            </div>
-            <div className="flex gap-3 items-start">
-              <span className="text-3xl">🏆</span>
-              <div>
-                <h3 className="font-bold text-lg">Score System</h3>
-                <p className="text-indigo-100">Unified scoring combining contributions and learning</p>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="flex gap-4 pt-4">
+    <div className="min-h-screen bg-canvas">
+      <div className="mx-auto grid min-h-screen max-w-6xl items-center gap-12 px-6 py-12 lg:grid-cols-[1.1fr_1fr] lg:px-10">
+        <div>
+          <h1 className="text-5xl font-extrabold leading-[1.02] tracking-tight sm:text-6xl">
+            See whether you coded today.
+          </h1>
+          <p className="mt-5 max-w-prose text-lg text-subtle">
+            DevDash turns your GitHub commits, LeetCode problems and timed sessions into one score, a streak and a
+            week you can read at a glance.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/settings"
-              className="bg-white dark:bg-indigo-200 text-indigo-600 dark:text-indigo-900 px-8 py-3 rounded-lg font-bold hover:bg-indigo-50 dark:hover:bg-indigo-100 transition transform hover:scale-105 shadow-lg"
+              className="inline-flex h-12 items-center rounded-lg bg-brand px-6 font-semibold text-brand-ink transition-colors hover:brightness-110"
             >
-              Get Started →
+              Add your usernames
             </Link>
-            <a
-              href="https://github.com/princeraj2572/dev-dashboard"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-indigo-400 dark:bg-indigo-600 bg-opacity-30 dark:bg-opacity-40 text-white border-2 border-white px-8 py-3 rounded-lg font-bold hover:bg-opacity-50 dark:hover:bg-opacity-60 transition"
+            <Link
+              to="/"
+              className="inline-flex h-12 items-center rounded-lg border border-line bg-surface px-6 font-semibold transition-colors hover:bg-sunken"
             >
-              GitHub Repo ⭐
-            </a>
+              Open dashboard
+            </Link>
           </div>
         </div>
 
-        {/* Right Side - Visual */}
-        <div className="hidden lg:flex justify-center">
-          <div className="relative w-full max-w-md">
-            {/* Floating Cards */}
-            <div className="absolute top-0 left-0 w-40 h-32 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm p-4 transform -rotate-12 shadow-xl">
-              <p className="text-sm font-semibold mb-2">📈 This Week</p>
-              <p className="text-3xl font-bold">42</p>
-              <p className="text-xs opacity-75">Commits</p>
-            </div>
-
-            <div className="absolute top-32 right-0 w-40 h-32 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm p-4 transform rotate-12 shadow-xl">
-              <p className="text-sm font-semibold mb-2">🎯 Solved</p>
-              <p className="text-3xl font-bold">157</p>
-              <p className="text-xs opacity-75">Problems</p>
-            </div>
-
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-32 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm p-4 shadow-xl">
-              <p className="text-sm font-semibold mb-2">🔥 Current Streak</p>
-              <p className="text-3xl font-bold">28</p>
-              <p className="text-xs opacity-75">Days</p>
+        <div className="space-y-6">
+          <div className="rounded-2xl bg-slab p-6 text-slab-ink sm:p-8" aria-hidden="true">
+            <p className="text-sm text-slab-ink/70">A sample week</p>
+            <div className="mt-4">
+              <WeekStrip days={sampleWeek} onDark />
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Bottom CTA */}
-      <div className="absolute bottom-8 left-0 right-0 text-center">
-        <Link
-          to="/dashboard"
-          className="inline-block text-white text-sm opacity-75 hover:opacity-100 transition"
-        >
-          Skip to Dashboard ↓
-        </Link>
+          <ul className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+            {features.map(({ Icon, title, text }) => (
+              <li key={title} className="flex gap-3">
+                <Icon className="mt-0.5 size-5 shrink-0 text-brand" aria-hidden="true" />
+                <div>
+                  <h2 className="text-base font-semibold">{title}</h2>
+                  <p className="text-sm text-subtle">{text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )

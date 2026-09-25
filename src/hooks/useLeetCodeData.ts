@@ -14,7 +14,12 @@ export const useLeetCodeData = (): UseLeetCodeDataReturn => {
 
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['leetcode', leetcodeUsername],
-    queryFn: () => fetchLeetCodeProfile(leetcodeUsername),
+    queryFn: async () => {
+      const result = await fetchLeetCodeProfile(leetcodeUsername)
+      // The API layer returns null on failure; surface that as an error so the UI can say so.
+      if (!result) throw new Error('LeetCode stats are unavailable')
+      return result
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
     enabled: !!leetcodeUsername,
     retry: 1,

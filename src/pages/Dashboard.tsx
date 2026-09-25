@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { GitCommitHorizontal, GitPullRequest, CheckCheck, Clock } from 'lucide-react'
 import { useGithubData } from '@/hooks/useGithubData'
 import { useLeetCodeData } from '@/hooks/useLeetCodeData'
 import { useCodingTimer } from '@/hooks/useCodingTimer'
@@ -5,231 +7,159 @@ import { useGoals } from '@/hooks/useGoals'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { calculateTotalScore } from '@/utils/scoreCalculator'
 import { calculateStreaks } from '@/utils/streakCalculator'
-import Button from '@/components/common/Button'
-import MetricCard from '@/components/cards/MetricCard'
-import CommitChart from '@/components/charts/CommitChart'
+import { lastNDays } from '@/utils/weekActivity'
+import MetricStrip from '@/components/cards/MetricStrip'
+import LanguageBar from '@/components/charts/LanguageBar'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
-import ActivityFeed from '@/components/common/ActivityFeed'
 import LeetCodeStatsCard from '@/components/leetcode/LeetCodeStatsCard'
-import ProblemDifficultyChart from '@/components/leetcode/ProblemDifficultyChart'
 import ScoreDisplay from '@/components/score/ScoreDisplay'
 import StreakDisplay from '@/components/streak/StreakDisplay'
-import Section from '@/components/common/Section'
-import Card from '@/components/common/Card'
+import PageHeader from '@/components/layout/PageHeader'
 import Alert from '@/components/common/Alert'
-import Badge from '@/components/common/Badge'
 import ProgressBar from '@/components/common/ProgressBar'
-import HeroSection from '@/components/common/HeroSection'
+
+const linkButton =
+  'inline-flex h-11 items-center justify-center rounded-lg bg-brand px-4 text-sm font-semibold text-brand-ink transition-colors hover:brightness-110 sm:h-10'
+
+const greeting = () => {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
+}
 
 export const Dashboard = () => {
   const { githubUsername, leetcodeUsername } = useDashboardStore()
   const { data: githubStats, isLoading: githubLoading, error: githubError } = useGithubData()
-  const { score: leetcodeScore, ...leetcodeStats } = useLeetCodeData()
+  const { score: leetcodeScore, isLoading: leetcodeLoading, error: leetcodeError, ...leetcodeStats } =
+    useLeetCodeData()
   const { sessions } = useCodingTimer()
   const { goals, getGoalProgress } = useGoals()
 
-  // Calculate combined score
   const combinedScore = calculateTotalScore(githubStats || null, leetcodeStats)
-
-  // Calculate streaks from coding sessions
   const streakData = calculateStreaks(sessions)
+  const week = lastNDays(githubStats?.commitsPerDay || [], 7)
+  const codingHours = sessions.reduce((sum, s) => sum + s.duration, 0) / 3600
 
-  const hasNoProfiles = !githubUsername && !leetcodeUsername
-
-  if (hasNoProfiles) {
+  if (!githubUsername && !leetcodeUsername) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <HeroSection
-          title="Welcome to DevDash! 🚀"
-          subtitle="Your Personal Developer Productivity Hub"
-          description="Track your GitHub contributions, LeetCode progress, coding sessions, and personal goals all in one place."
-          ctaText="Get Started"
-          ctaAction={() => window.location.href = '/settings'}
-          backgroundVariant="primary"
-        />
-      </div>
-    )
-  }
-
-  if (githubLoading) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <LoadingSpinner />
-      </div>
-    )
-  }
-
-  if (githubError) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <Alert type="error" title="⚠️ Error Loading Data">
-          <p>
-            Could not fetch GitHub data. Please check your token and username in
-            {' '}
-            <a href="/settings" className="underline font-semibold hover:text-red-600">Settings</a>
-            .
+      <>
+        <PageHeader title="Welcome to DevDash" description="Your GitHub, LeetCode, coding time and goals in one place." />
+        <div className="max-w-xl rounded-xl border border-line bg-surface p-6">
+          <h2 className="text-lg font-semibold">Add your usernames to get started</h2>
+          <p className="mt-1.5 text-subtle">
+            DevDash reads your public GitHub and LeetCode activity. No sign-in is needed, and nothing leaves
+            your browser except those requests.
           </p>
-        </Alert>
-      </div>
+          <Link to="/settings" className={`${linkButton} mt-5`}>
+            Open settings
+          </Link>
+        </div>
+      </>
     )
   }
+
+  if (githubLoading) return <LoadingSpinner />
+
+  const today = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-950/20 dark:to-slate-900">
-      <div className="space-y-8 px-4 md:px-8 lg:px-12 py-8 md:py-12 max-w-7xl mx-auto">
-      {/* Welcome Hero */}
-      <HeroSection
-        title={`Welcome back, Developer! 🎉`}
-        subtitle="Here's your productivity summary"
-        backgroundVariant="primary"
-      />
+    <>
+      <PageHeader title={greeting()} description={today} />
 
-      {/* Score Display - Prominent */}
-      <div className="animate-fade-in">
-        <ScoreDisplay score={combinedScore} />
-      </div>
+      <div className="space-y-6">
+        {githubError && (
+          <Alert type="error" title="GitHub stats did not load">
+            Check the username in <Link to="/settings" className="font-semibold underline">Settings</Link>. Without
+            a token GitHub allows 60 requests an hour, so waiting a while or adding a token also helps.
+          </Alert>
+        )}
 
-      {/* Quick Stats Grid */}
-      <div>
-        <Section title="📊 Quick Stats" subtitle="Key metrics at a glance" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          <MetricCard
-            label="Commits This Week"
-            value={githubStats?.totalCommitsThisWeek || 0}
-            icon="📝"
-            color="blue"
-            trend={{ direction: 'up', percentage: 12 }}
-          />
-          <MetricCard
-            label="Pull Requests"
-            value={githubStats?.totalPRs || 0}
-            icon="🔀"
-            color="purple"
-            trend={{ direction: 'up', percentage: 5 }}
-          />
-          <MetricCard
-            label="Problems Solved"
-            value={leetcodeStats.totalSolved || 0}
-            icon="✅"
-            color="green"
-            trend={{ direction: 'up', percentage: 8 }}
-          />
-          <MetricCard
-            label="Coding Hours"
-            value={sessions.length > 0 ? sessions.reduce((sum, s) => sum + s.duration, 0) / 3600 : 0}
-            icon="⏳"
-            color="orange"
-            trend={{ direction: 'up', percentage: 3 }}
-          />
-        </div>
-      </div>
+        <ScoreDisplay score={combinedScore} week={week} />
 
-      {/* Streaks & Goals Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <StreakDisplay streak={streakData} />
+        <MetricStrip
+          items={[
+            {
+              label: 'Commits this week',
+              value: githubStats?.totalCommitsThisWeek ?? 0,
+              icon: <GitCommitHorizontal className="size-4" />,
+            },
+            {
+              label: 'Pull requests',
+              value: githubStats?.totalPRs ?? 0,
+              icon: <GitPullRequest className="size-4" />,
+            },
+            { label: 'Problems solved', value: leetcodeStats.totalSolved, icon: <CheckCheck className="size-4" /> },
+            { label: 'Coding hours', value: codingHours.toFixed(1), icon: <Clock className="size-4" /> },
+          ]}
+        />
 
-        {/* Goals Overview */}
-        <Card variant="elevated">
-          <Section
-            title="🎯 Active Goals"
-            subtitle={`${goals.length} total goals`}
-          />
+        <div className="grid gap-6 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <StreakDisplay streak={streakData} />
+          </div>
 
-          {goals.length > 0 ? (
-            <div className="space-y-6 mt-6">
-              {goals.slice(0, 3).map((goal) => {
-                const progress = getGoalProgress(goal.id)
-                const isCompleted = progress >= 100
-                return (
-                  <div key={goal.id} className="space-y-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                    <div className="flex justify-between items-center">
-                      <div className="flex-1">
-                        <span className="font-bold text-base text-gray-900 dark:text-white">
-                          {goal.title}
+          <section aria-label="Goals" className="rounded-xl border border-line bg-surface p-5 sm:p-6 lg:col-span-7">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold">Goals</h2>
+                <p className="text-sm text-subtle">
+                  {goals.length === 0 ? 'Nothing set yet' : `${goals.length} in total`}
+                </p>
+              </div>
+              <Link to="/goals" className="text-sm font-semibold text-brand hover:underline">
+                {goals.length === 0 ? 'Create a goal' : 'View all'}
+              </Link>
+            </div>
+
+            {goals.length > 0 ? (
+              <ul className="mt-5 space-y-5">
+                {goals.slice(0, 4).map((goal) => {
+                  const progress = getGoalProgress(goal.id)
+                  return (
+                    <li key={goal.id}>
+                      <div className="mb-2 flex items-baseline justify-between gap-3">
+                        <span className="min-w-0 truncate font-medium">{goal.title}</span>
+                        <span className="shrink-0 text-sm tabular-nums text-subtle">
+                          {goal.current} of {goal.target} {goal.unit}
                         </span>
                       </div>
-                      <Badge variant={isCompleted ? 'success' : 'info'}>
-                        {goal.current}/{goal.target}
-                      </Badge>
-                    </div>
-                    <ProgressBar
-                      value={goal.current}
-                      max={goal.target}
-                      variant={isCompleted ? 'success' : 'primary'}
-                    />
-                  </div>
-                )
-              })}
-
-              <div className="pt-4 border-t border-gray-200 dark:border-slate-600">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => window.location.href = '/goals'}
-                  className="w-full"
-                >
-                  View All Goals →
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-12 mt-6">
-              <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">No goals yet</p>
-              <Button
-                onClick={() => window.location.href = '/goals'}
-                size="md"
-                variant="gradient"
-              >
-                Create First Goal
-              </Button>
-            </div>
-          )}
-        </Card>
-      </div>
-
-      {/* Analytics Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card variant="elevated">
-          <h3 className="text-2xl font-bold mb-8 dark:text-white">📈 Commit Trends</h3>
-          <CommitChart data={githubStats?.commitsPerDay || []} />
-        </Card>
-
-        <Card variant="elevated">
-          <h3 className="text-2xl font-bold mb-8 dark:text-white">💻 Language Breakdown</h3>
-          {githubStats?.languageBreakdown && githubStats.languageBreakdown.length > 0 ? (
-            <div className="space-y-5">
-              {githubStats.languageBreakdown.slice(0, 5).map((lang) => (
-                <div key={lang.language} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold text-sm dark:text-white">{lang.language}</span>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-slate-700 px-3 py-1 rounded-full">{lang.percentage.toFixed(1)}%</span>
-                  </div>
-                  <ProgressBar
-                    value={lang.percentage}
-                    max={100}
-                    variant="primary"
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-12">No language data available</p>
-          )}
-        </Card>
-      </div>
-
-      {/* LeetCode Section */}
-      {leetcodeUsername && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <LeetCodeStatsCard stats={leetcodeStats} score={leetcodeScore} isLoading={false} />
-          <ProblemDifficultyChart stats={leetcodeStats} />
+                      <ProgressBar value={progress} max={100} label={goal.title} />
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : (
+              <p className="mt-6 max-w-sm text-subtle">
+                Pick something measurable, like 20 problems this month, and track it here.
+              </p>
+            )}
+          </section>
         </div>
-      )}
 
-      {/* Activity Feed */}
-      <ActivityFeed />
+        <div className="grid gap-6 lg:grid-cols-12">
+          <section
+            aria-label="Languages"
+            className="rounded-xl border border-line bg-surface p-5 sm:p-6 lg:col-span-5"
+          >
+            <h2 className="text-lg font-semibold">Languages</h2>
+            <p className="mb-5 text-sm text-subtle">Share of your public repositories</p>
+            <LanguageBar languages={githubStats?.languageBreakdown || []} />
+          </section>
+
+          {leetcodeUsername && (
+            <div className="lg:col-span-7">
+              <LeetCodeStatsCard
+                stats={leetcodeStats}
+                score={leetcodeScore}
+                isLoading={leetcodeLoading}
+                error={!!leetcodeError}
+              />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

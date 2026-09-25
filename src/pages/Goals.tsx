@@ -1,62 +1,41 @@
 import { useGoals } from '@/hooks/useGoals'
 import GoalCard from '@/components/goals/GoalCard'
 import GoalForm from '@/components/goals/GoalForm'
-import { Card } from '@/components/ui/card'
-import Badge from '@/components/common/Badge'
-import HeroSection from '@/components/common/HeroSection'
-import MetricCard from '@/components/cards/MetricCard'
+import MetricStrip from '@/components/cards/MetricStrip'
+import PageHeader from '@/components/layout/PageHeader'
 
 export const Goals = () => {
-  const { goals, addGoal, deleteGoal, updateProgress, getGoalProgress, getCompletedGoals } =
-    useGoals()
+  const { goals, addGoal, deleteGoal, updateProgress, getGoalProgress, getCompletedGoals } = useGoals()
 
   const completedGoals = getCompletedGoals()
-  const activeGoals = goals.filter((g) => getCompletedGoals().every((c) => c.id !== g.id))
+  const activeGoals = goals.filter((g) => completedGoals.every((c) => c.id !== g.id))
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-slate-50 dark:from-slate-900 dark:via-emerald-950/20 dark:to-slate-900">
-      {/* Hero Header */}
-      <HeroSection
-        title="🎯 Goals & Objectives"
-        subtitle="Track your development and learning goals"
-        description="Set ambitious goals and monitor your progress as you build towards your vision."
-        backgroundVariant="success"
+    <>
+      <PageHeader
+        title="Goals"
+        description="Set a target, nudge the number as you go, and finish before the deadline."
       />
 
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-8 animate-fade-in">
-        {/* Goal Form */}
+      <div className="space-y-8">
         <GoalForm onSubmit={addGoal} />
 
-        {/* Statistics */}
         {goals.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <MetricCard
-              label="Total Goals"
-              value={goals.length}
-              icon="📋"
-            />
-            <MetricCard
-              label="Completed"
-              value={completedGoals.length}
-              icon="✅"
-              trend={{ direction: 'up', percentage: (completedGoals.length / Math.max(goals.length, 1)) * 100 }}
-            />
-            <MetricCard
-              label="In Progress"
-              value={activeGoals.length}
-              icon="⚡"
-            />
-          </div>
+          <MetricStrip
+            items={[
+              { label: 'Total', value: goals.length },
+              { label: 'In progress', value: activeGoals.length },
+              { label: 'Completed', value: completedGoals.length },
+            ]}
+          />
         )}
 
-        {/* Active Goals */}
         {activeGoals.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold dark:text-white">Active Goals</h2>
-              <Badge variant="info">{activeGoals.length}</Badge>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <section aria-labelledby="active-goals">
+            <h2 id="active-goals" className="mb-4 text-lg font-semibold">
+              In progress
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {activeGoals.map((goal) => (
                 <GoalCard
                   key={goal.id}
@@ -68,17 +47,15 @@ export const Goals = () => {
                 />
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Completed Goals */}
         {completedGoals.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold dark:text-white">🎉 Completed Goals</h2>
-              <Badge variant="success">{completedGoals.length}</Badge>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <section aria-labelledby="completed-goals">
+            <h2 id="completed-goals" className="mb-4 text-lg font-semibold">
+              Completed
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {completedGoals.map((goal) => (
                 <GoalCard
                   key={goal.id}
@@ -86,24 +63,23 @@ export const Goals = () => {
                   progress={100}
                   onUpdate={(current) => updateProgress(goal.id, current)}
                   onDelete={() => deleteGoal(goal.id)}
-                  isCompleted={true}
+                  isCompleted
                 />
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Empty State */}
         {goals.length === 0 && (
-          <Card className="text-center py-16">
-            <p className="text-6xl mb-4">🎯</p>
-            <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">
-              No goals yet. Create your first goal to get started!
+          <div className="rounded-xl border border-dashed border-line px-6 py-14 text-center">
+            <p className="text-lg font-semibold">No goals yet</p>
+            <p className="mx-auto mt-1 max-w-sm text-subtle">
+              Choose one thing you can count, like problems solved or hours coded, and give it a deadline.
             </p>
-          </Card>
+          </div>
         )}
       </div>
-    </div>
+    </>
   )
 }
 

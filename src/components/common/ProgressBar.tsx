@@ -6,6 +6,7 @@ interface ProgressBarProps {
   variant?: 'primary' | 'success' | 'warning' | 'danger'
   className?: string
   animated?: boolean
+  label?: string
 }
 
 export const ProgressBar = ({
@@ -15,37 +16,33 @@ export const ProgressBar = ({
   size = 'md',
   variant = 'primary',
   className = '',
-  animated = true,
+  label,
 }: ProgressBarProps) => {
-  const percentage = Math.min((value / max) * 100, 100)
+  const percentage = max > 0 ? Math.min(Math.max((value / max) * 100, 0), 100) : 0
 
-  const sizeStyles = {
-    sm: 'h-1.5',
-    md: 'h-2.5',
-    lg: 'h-4',
-  }
-
-  const variantStyles = {
-    primary: 'bg-gradient-to-r from-indigo-500 to-indigo-600 dark:from-indigo-500 dark:to-indigo-400',
-    success: 'bg-gradient-to-r from-green-500 to-green-600 dark:from-green-500 dark:to-green-400',
-    warning: 'bg-gradient-to-r from-yellow-500 to-yellow-600 dark:from-yellow-500 dark:to-yellow-400',
-    danger: 'bg-gradient-to-r from-red-500 to-red-600 dark:from-red-500 dark:to-red-400',
+  const sizeStyles = { sm: 'h-1.5', md: 'h-2', lg: 'h-3' }
+  const fillStyles = {
+    primary: 'bg-brand',
+    success: 'bg-brand',
+    warning: 'bg-amber',
+    danger: 'bg-danger',
   }
 
   return (
     <div className={className}>
-      <div className={`w-full bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden ${sizeStyles[size]} shadow-sm`}>
+      <div className={`w-full overflow-hidden rounded-full bg-sunken ${sizeStyles[size]}`}>
         <div
-          className={`${variantStyles[variant]} rounded-full transition-all duration-700 ease-out ${sizeStyles[size]} ${animated ? 'shadow-md' : ''}`}
+          className={`h-full rounded-full transition-[width] duration-500 ease-out ${fillStyles[variant]}`}
           style={{ width: `${percentage}%` }}
           role="progressbar"
+          aria-label={label}
           aria-valuenow={value}
           aria-valuemin={0}
           aria-valuemax={max}
         />
       </div>
       {showLabel && (
-        <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mt-2">
+        <p className="mt-1.5 text-xs tabular-nums text-subtle">
           {value} / {max}
         </p>
       )}

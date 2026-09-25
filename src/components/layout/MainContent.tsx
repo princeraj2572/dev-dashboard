@@ -2,11 +2,8 @@ import { type ReactNode } from 'react'
 
 export const MainContent = ({ children }: { children: ReactNode }) => {
   return (
-    <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900">
-      {/* Content wrapper with proper spacing and responsive padding */}
-      <div className="w-full">
-        {children}
-      </div>
+    <main className="min-w-0 flex-1 pb-24 md:pb-0">
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">{children}</div>
     </main>
   )
 }

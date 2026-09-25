@@ -4,7 +4,7 @@ import MainContent from './MainContent'
 
 export const Layout = () => {
   return (
-    <div className="flex h-screen bg-white dark:bg-slate-900">
+    <div className="flex min-h-screen">
       <Sidebar />
       <MainContent>
         <Outlet />
