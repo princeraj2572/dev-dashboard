@@ -38,7 +38,7 @@ export const Settings = () => {
         backgroundVariant="primary"
       />
 
-      <div className="max-w-2xl mx-auto px-4 py-12 space-y-6">
+      <div className="max-w-2xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6 animate-fade-in">
         {/* Success Alert */}
         {savedMessage && (
           <Alert

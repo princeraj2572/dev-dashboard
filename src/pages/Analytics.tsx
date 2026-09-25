@@ -50,7 +50,7 @@ export const Analytics = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-amber-50 to-white dark:from-slate-900 dark:via-amber-950 dark:to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50/30 to-slate-50 dark:from-slate-900 dark:via-amber-950/20 dark:to-slate-900">
       {/* Hero Header */}
       <HeroSection
         title="📊 Analytics & Insights"
@@ -59,7 +59,7 @@ export const Analytics = () => {
         backgroundVariant="warning"
       />
 
-      <div className="space-y-8 px-4 py-12 max-w-6xl mx-auto">
+      <div className="space-y-8 px-4 md:px-8 lg:px-12 py-8 md:py-12 max-w-7xl mx-auto animate-fade-in">
         {/* GitHub Section */}
         {githubUsername && (
           <>
