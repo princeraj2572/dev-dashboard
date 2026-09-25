@@ -45,19 +45,19 @@ export const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:relative w-64 h-screen bg-gradient-to-b from-slate-900 to-slate-950 dark:from-slate-950 dark:to-slate-950 text-white p-6 flex flex-col transition-transform duration-300 z-40
+        className={`fixed md:relative w-64 h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 text-white p-6 flex flex-col transition-transform duration-300 z-40 shadow-2xl
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
       >
         {/* Logo */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2">
-            <span className="text-3xl">🚀</span>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+        <div className="mb-10">
+          <div className="flex items-center gap-3">
+            <div className="text-4xl transform hover:scale-110 transition-transform duration-300">🚀</div>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
               DevDash
             </h1>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Developer Productivity Hub</p>
+          <p className="text-xs text-slate-400 mt-2 font-medium">Developer Productivity Hub</p>
         </div>
 
         {/* Navigation */}
@@ -67,24 +67,28 @@ export const Sidebar = () => {
               key={item.href}
               to={item.href}
               onClick={() => setIsMobileOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
+              className={`flex items-center gap-3 px-5 py-3.5 rounded-xl transition-all duration-300 group
                 ${
                   isActive(item.href)
-                    ? 'bg-indigo-600 text-white font-semibold shadow-lg'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg'
+                    : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
                 }
               `}
               aria-current={isActive(item.href) ? 'page' : undefined}
             >
-              <span className="text-xl">{item.icon}</span>
+              <span className="text-xl group-hover:scale-125 transition-transform duration-300">{item.icon}</span>
               <span className="text-sm font-medium">{item.label}</span>
+              {isActive(item.href) && (
+                <div className="ml-auto w-2 h-2 bg-white rounded-full shadow-lg" />
+              )}
             </Link>
           ))}
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-slate-700 pt-4 space-y-2">
-          <p className="text-xs text-slate-500">© 2026 Developer Dashboard</p>
+        <div className="border-t border-slate-700/50 pt-6 space-y-2">
+          <p className="text-xs text-slate-500 font-medium">© 2026 Developer Dashboard</p>
+          <p className="text-xs text-slate-600">v1.0.0</p>
         </div>
       </aside>
     </>

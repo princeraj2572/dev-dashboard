@@ -17,27 +17,31 @@ export const Alert = ({
 }: AlertProps) => {
   const typeStyles = {
     success: {
-      bg: 'bg-green-50 dark:bg-green-900/20',
-      border: 'border-green-200 dark:border-green-800',
-      text: 'text-green-700 dark:text-green-300',
+      bg: 'bg-green-50 dark:bg-green-900/30',
+      border: 'border-green-300 dark:border-green-600',
+      text: 'text-green-800 dark:text-green-200',
+      bgIcon: 'bg-green-100 dark:bg-green-900/50',
       icon: '✓',
     },
     error: {
-      bg: 'bg-red-50 dark:bg-red-900/20',
-      border: 'border-red-200 dark:border-red-800',
-      text: 'text-red-700 dark:text-red-300',
+      bg: 'bg-red-50 dark:bg-red-900/30',
+      border: 'border-red-300 dark:border-red-600',
+      text: 'text-red-800 dark:text-red-200',
+      bgIcon: 'bg-red-100 dark:bg-red-900/50',
       icon: '✕',
     },
     warning: {
-      bg: 'bg-yellow-50 dark:bg-yellow-900/20',
-      border: 'border-yellow-200 dark:border-yellow-800',
-      text: 'text-yellow-700 dark:text-yellow-300',
+      bg: 'bg-yellow-50 dark:bg-yellow-900/30',
+      border: 'border-yellow-300 dark:border-yellow-600',
+      text: 'text-yellow-800 dark:text-yellow-200',
+      bgIcon: 'bg-yellow-100 dark:bg-yellow-900/50',
       icon: '⚠',
     },
     info: {
-      bg: 'bg-blue-50 dark:bg-blue-900/20',
-      border: 'border-blue-200 dark:border-blue-800',
-      text: 'text-blue-700 dark:text-blue-300',
+      bg: 'bg-blue-50 dark:bg-blue-900/30',
+      border: 'border-blue-300 dark:border-blue-600',
+      text: 'text-blue-800 dark:text-blue-200',
+      bgIcon: 'bg-blue-100 dark:bg-blue-900/50',
       icon: 'ⓘ',
     },
   }
@@ -47,20 +51,20 @@ export const Alert = ({
   return (
     <div
       role="alert"
-      className={`${style.bg} border ${style.border} ${style.text} rounded-lg p-4 flex items-start gap-3 ${className}`}
+      className={`${style.bg} border-2 ${style.border} ${style.text} rounded-xl p-6 flex items-start gap-4 ${className}`}
     >
-      <span className="text-lg flex-shrink-0" aria-hidden="true">
+      <span className={`${style.bgIcon} text-xl leading-none flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center font-bold`} aria-hidden="true">
         {style.icon}
       </span>
       <div className="flex-1">
-        {title && <p className="font-semibold mb-1">{title}</p>}
-        {children}
+        {title && <p className="font-bold text-lg mb-2">{title}</p>}
+        <div className="text-sm opacity-90">{children}</div>
       </div>
       {onClose && (
         <button
           onClick={onClose}
           aria-label="Close alert"
-          className="text-xl leading-none hover:opacity-70 transition-opacity"
+          className="text-2xl leading-none hover:opacity-50 transition-opacity flex-shrink-0 p-1"
         >
           ✕
         </button>

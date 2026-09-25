@@ -5,7 +5,7 @@ import { useGoals } from '@/hooks/useGoals'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { calculateTotalScore } from '@/utils/scoreCalculator'
 import { calculateStreaks } from '@/utils/streakCalculator'
-import { Button } from '@/components/ui/button'
+import Button from '@/components/common/Button'
 import MetricCard from '@/components/cards/MetricCard'
 import CommitChart from '@/components/charts/CommitChart'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
@@ -15,7 +15,7 @@ import ProblemDifficultyChart from '@/components/leetcode/ProblemDifficultyChart
 import ScoreDisplay from '@/components/score/ScoreDisplay'
 import StreakDisplay from '@/components/streak/StreakDisplay'
 import Section from '@/components/common/Section'
-import { Card } from '@/components/ui/card'
+import Card from '@/components/common/Card'
 import Alert from '@/components/common/Alert'
 import Badge from '@/components/common/Badge'
 import ProgressBar from '@/components/common/ProgressBar'
@@ -78,8 +78,8 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-indigo-50 to-white dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900">
-      <div className="space-y-8 px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50 dark:from-slate-900 dark:via-indigo-950/20 dark:to-slate-900">
+      <div className="space-y-8 px-4 md:px-8 lg:px-12 py-8 md:py-12 max-w-7xl mx-auto">
       {/* Welcome Hero */}
       <HeroSection
         title={`Welcome back, Developer! 🎉`}
@@ -88,12 +88,14 @@ export const Dashboard = () => {
       />
 
       {/* Score Display - Prominent */}
-      <ScoreDisplay score={combinedScore} />
+      <div className="animate-fade-in">
+        <ScoreDisplay score={combinedScore} />
+      </div>
 
       {/* Quick Stats Grid */}
       <div>
         <Section title="📊 Quick Stats" subtitle="Key metrics at a glance" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           <MetricCard
             label="Commits This Week"
             value={githubStats?.totalCommitsThisWeek || 0}
@@ -126,26 +128,26 @@ export const Dashboard = () => {
       </div>
 
       {/* Streaks & Goals Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <StreakDisplay streak={streakData} />
 
         {/* Goals Overview */}
-        <Card>
+        <Card variant="elevated">
           <Section
             title="🎯 Active Goals"
             subtitle={`${goals.length} total goals`}
           />
 
           {goals.length > 0 ? (
-            <div className="space-y-4 mt-6">
+            <div className="space-y-6 mt-6">
               {goals.slice(0, 3).map((goal) => {
                 const progress = getGoalProgress(goal.id)
                 const isCompleted = progress >= 100
                 return (
-                  <div key={goal.id} className="space-y-2">
+                  <div key={goal.id} className="space-y-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-700/50">
                     <div className="flex justify-between items-center">
                       <div className="flex-1">
-                        <span className="font-semibold text-sm text-gray-900 dark:text-white">
+                        <span className="font-bold text-base text-gray-900 dark:text-white">
                           {goal.title}
                         </span>
                       </div>
@@ -162,7 +164,7 @@ export const Dashboard = () => {
                 )
               })}
 
-              <div className="pt-4 border-t border-gray-200 dark:border-slate-700">
+              <div className="pt-4 border-t border-gray-200 dark:border-slate-600">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -174,11 +176,12 @@ export const Dashboard = () => {
               </div>
             </div>
           ) : (
-            <div className="text-center py-8 mt-6">
-              <p className="text-gray-600 dark:text-gray-400 mb-4">No goals yet</p>
+            <div className="text-center py-12 mt-6">
+              <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">No goals yet</p>
               <Button
                 onClick={() => window.location.href = '/goals'}
-                size="sm"
+                size="md"
+                variant="gradient"
               >
                 Create First Goal
               </Button>
@@ -188,21 +191,21 @@ export const Dashboard = () => {
       </div>
 
       {/* Analytics Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <h3 className="text-2xl font-bold mb-6 dark:text-white">📈 Commit Trends</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card variant="elevated">
+          <h3 className="text-2xl font-bold mb-8 dark:text-white">📈 Commit Trends</h3>
           <CommitChart data={githubStats?.commitsPerDay || []} />
         </Card>
 
-        <Card>
-          <h3 className="text-2xl font-bold mb-6 dark:text-white">💻 Language Breakdown</h3>
+        <Card variant="elevated">
+          <h3 className="text-2xl font-bold mb-8 dark:text-white">💻 Language Breakdown</h3>
           {githubStats?.languageBreakdown && githubStats.languageBreakdown.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-5">
               {githubStats.languageBreakdown.slice(0, 5).map((lang) => (
-                <div key={lang.language}>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="font-medium dark:text-white">{lang.language}</span>
-                    <span className="text-gray-600 dark:text-gray-400">{lang.percentage.toFixed(1)}%</span>
+                <div key={lang.language} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-sm dark:text-white">{lang.language}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-slate-700 px-3 py-1 rounded-full">{lang.percentage.toFixed(1)}%</span>
                   </div>
                   <ProgressBar
                     value={lang.percentage}
@@ -213,14 +216,14 @@ export const Dashboard = () => {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-8">No language data available</p>
+            <p className="text-gray-500 dark:text-gray-400 text-center py-12">No language data available</p>
           )}
         </Card>
       </div>
 
       {/* LeetCode Section */}
       {leetcodeUsername && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <LeetCodeStatsCard stats={leetcodeStats} score={leetcodeScore} isLoading={false} />
           <ProblemDifficultyChart stats={leetcodeStats} />
         </div>

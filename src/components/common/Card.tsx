@@ -6,6 +6,7 @@ interface CardProps {
   hoverable?: boolean
   onClick?: () => void
   role?: string
+  variant?: 'default' | 'elevated' | 'outlined' | 'gradient'
 }
 
 export const Card = ({
@@ -14,12 +15,24 @@ export const Card = ({
   hoverable = false,
   onClick,
   role,
+  variant = 'default',
 }: CardProps) => {
-  const hoverClass = hoverable ? 'hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer' : ''
+  const variantStyles = {
+    default: 'bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700',
+    elevated: 'bg-white dark:bg-slate-800 shadow-lg',
+    outlined: 'bg-white dark:bg-slate-800 border-2 border-indigo-200 dark:border-indigo-700/40',
+    gradient: 'bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700',
+  }
+
+  const hoverClass = hoverable 
+    ? 'hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer' 
+    : ''
+
+  const shadowClass = variant === 'elevated' ? 'shadow-lg' : 'shadow'
 
   return (
     <div
-      className={`bg-white dark:bg-slate-800 rounded-lg shadow p-6 ${hoverClass} ${className}`}
+      className={`${variantStyles[variant]} rounded-xl ${shadowClass} p-6 ${hoverClass} ${className}`}
       onClick={onClick}
       role={role}
       tabIndex={hoverable && onClick ? 0 : undefined}
