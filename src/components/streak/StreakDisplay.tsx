@@ -1,10 +1,14 @@
 import type { StreakData } from '@/utils/streakCalculator'
+import ProgressBar from '@/components/common/ProgressBar'
+import { formatMinutes } from '@/utils/timeStats'
 
 interface StreakDisplayProps {
   streak: StreakData
+  /** Today's coding time against the daily target. */
+  today?: { minutes: number; target: number }
 }
 
-export const StreakDisplay = ({ streak }: StreakDisplayProps) => {
+export const StreakDisplay = ({ streak, today }: StreakDisplayProps) => {
   const filled = Math.min(streak.currentStreak, 7)
   const message =
     streak.currentStreak === 0
@@ -40,6 +44,18 @@ export const StreakDisplay = ({ streak }: StreakDisplayProps) => {
       </div>
 
       <p className="mt-4 text-sm text-subtle">{message}</p>
+
+      {today && (
+        <div className="mt-5 border-t border-line pt-4">
+          <div className="mb-2 flex items-baseline justify-between text-sm">
+            <span className="text-subtle">Today</span>
+            <span className="font-medium tabular-nums">
+              {formatMinutes(today.minutes)} of {formatMinutes(today.target)}
+            </span>
+          </div>
+          <ProgressBar value={Math.min(today.minutes, today.target)} max={today.target} label="Today's coding time" />
+        </div>
+      )}
 
       <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-4 text-sm">
         <div>

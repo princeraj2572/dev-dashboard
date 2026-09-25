@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import type { Goal } from '@/types'
+import type { Goal, GoalSource } from '@/types'
+import type { LiveData } from '@/utils/goalSources'
+import { GOAL_SOURCES, sourceInfo } from '@/utils/goalSources'
 import Button from '@/components/common/Button'
 
 interface GoalFormProps {
   onSubmit: (goal: Omit<Goal, 'id'>) => void
+  /** Used to check which automatic sources have data, and to set the LeetCode baseline. */
+  live: LiveData
 }
 
 const defaultDeadline = () => {
@@ -18,12 +22,31 @@ const fieldClass =
 
 const units = ['tasks', 'hours', 'commits', 'problems', 'days', 'projects']
 
-export const GoalForm = ({ onSubmit }: GoalFormProps) => {
+export const GoalForm = ({ onSubmit, live }: GoalFormProps) => {
   const [title, setTitle] = useState('')
   const [target, setTarget] = useState(10)
   const [unit, setUnit] = useState('tasks')
+  const [source, setSource] = useState<GoalSource>('manual')
   const [deadline, setDeadline] = useState(defaultDeadline)
   const [isOpen, setIsOpen] = useState(false)
+
+  // Why a source cannot be chosen right now, or null when it can.
+  const unavailable: Partial<Record<GoalSource, string>> = {
+    leetcode: live.leetcodeSolved === null ? 'needs working LeetCode stats' : undefined,
+    commits: live.commitsThisWeek === null ? 'needs GitHub stats' : undefined,
+  }
+
+  const isAuto = source !== 'manual'
+  const info = sourceInfo(source)
+
+  const reset = () => {
+    setTitle('')
+    setTarget(10)
+    setUnit('tasks')
+    setSource('manual')
+    setDeadline(defaultDeadline())
+    setIsOpen(false)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,15 +56,13 @@ export const GoalForm = ({ onSubmit }: GoalFormProps) => {
       title: title.trim(),
       target: Math.max(1, target),
       current: 0,
-      unit: unit.trim(),
+      unit: isAuto ? info.unit : unit.trim(),
       deadline,
+      source,
+      createdAt: Date.now(),
+      ...(source === 'leetcode' ? { baseline: live.leetcodeSolved ?? 0 } : {}),
     })
-
-    setTitle('')
-    setTarget(10)
-    setUnit('tasks')
-    setDeadline(defaultDeadline())
-    setIsOpen(false)
+    reset()
   }
 
   if (!isOpen) {
@@ -78,6 +99,26 @@ export const GoalForm = ({ onSubmit }: GoalFormProps) => {
           />
         </div>
 
+        <div className="sm:col-span-2">
+          <label htmlFor="goal-source" className="mb-1.5 block text-sm font-medium">
+            How is progress counted?
+          </label>
+          <select
+            id="goal-source"
+            value={source}
+            onChange={(e) => setSource(e.target.value as GoalSource)}
+            className={fieldClass}
+          >
+            {GOAL_SOURCES.map((s) => (
+              <option key={s.id} value={s.id} disabled={!!unavailable[s.id]}>
+                {s.label}
+                {unavailable[s.id] ? ` (${unavailable[s.id]})` : ''}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1.5 text-sm text-subtle">{info.description}</p>
+        </div>
+
         <div>
           <label htmlFor="goal-target" className="mb-1.5 block text-sm font-medium">
             Target
@@ -96,11 +137,15 @@ export const GoalForm = ({ onSubmit }: GoalFormProps) => {
           <label htmlFor="goal-unit" className="mb-1.5 block text-sm font-medium">
             Unit
           </label>
-          <select id="goal-unit" value={unit} onChange={(e) => setUnit(e.target.value)} className={fieldClass}>
-            {units.map((u) => (
-              <option key={u}>{u}</option>
-            ))}
-          </select>
+          {isAuto ? (
+            <p className={`${fieldClass} flex items-center text-subtle`}>{info.unit}</p>
+          ) : (
+            <select id="goal-unit" value={unit} onChange={(e) => setUnit(e.target.value)} className={fieldClass}>
+              {units.map((u) => (
+                <option key={u}>{u}</option>
+              ))}
+            </select>
+          )}
         </div>
 
         <div className="sm:col-span-2">

@@ -1,11 +1,12 @@
-import { useGoals } from '@/hooks/useGoals'
+import { useResolvedGoals } from '@/hooks/useResolvedGoals'
 import GoalCard from '@/components/goals/GoalCard'
 import GoalForm from '@/components/goals/GoalForm'
 import MetricStrip from '@/components/cards/MetricStrip'
 import PageHeader from '@/components/layout/PageHeader'
 
 export const Goals = () => {
-  const { goals, addGoal, deleteGoal, updateProgress, getGoalProgress, getCompletedGoals } = useGoals()
+  const { goals, live, addGoal, deleteGoal, updateProgress, getGoalProgress, getCompletedGoals } =
+    useResolvedGoals()
 
   const completedGoals = getCompletedGoals()
   const activeGoals = goals.filter((g) => completedGoals.every((c) => c.id !== g.id))
@@ -14,11 +15,11 @@ export const Goals = () => {
     <>
       <PageHeader
         title="Goals"
-        description="Set a target, nudge the number as you go, and finish before the deadline."
+        description="Set a target and finish before the deadline. Progress can update itself from GitHub, LeetCode and the timer."
       />
 
       <div className="space-y-8">
-        <GoalForm onSubmit={addGoal} />
+        <GoalForm onSubmit={addGoal} live={live} />
 
         {goals.length > 0 && (
           <MetricStrip

@@ -5,6 +5,19 @@ export interface GithubStats {
   totalPRs: number
   languageBreakdown: { language: string; percentage: number }[]
   topRepos: { name: string; stars: number; commits: number }[]
+  recentActivity: ActivityItem[]
+  /** True when some pushes could not be resolved to a commit count and were counted as one. */
+  commitsApproximate: boolean
+}
+
+export interface ActivityItem {
+  id: string
+  kind: 'commit' | 'pull_request' | 'review' | 'create' | 'fork' | 'comment'
+  title: string
+  detail: string
+  repo: string
+  date: string
+  url: string
 }
 
 // LeetCode
@@ -18,6 +31,8 @@ export interface LeetCodeStats {
 }
 
 // Goals
+export type GoalSource = 'manual' | 'leetcode' | 'commits' | 'hours'
+
 export interface Goal {
   id: string
   title: string
@@ -25,6 +40,12 @@ export interface Goal {
   current: number
   unit: string
   deadline: string
+  /** Where progress comes from. Missing on older goals, which are manual. */
+  source?: GoalSource
+  /** For 'leetcode' goals: problems already solved when the goal was created. */
+  baseline?: number
+  /** Creation time in ms; 'hours' goals only count sessions after this. */
+  createdAt?: number
 }
 
 // Coding Session

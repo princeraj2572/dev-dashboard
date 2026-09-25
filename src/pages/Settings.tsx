@@ -6,6 +6,7 @@ import Input from '@/components/common/Input'
 import Alert from '@/components/common/Alert'
 import PageHeader from '@/components/layout/PageHeader'
 import GitSyncStatus from '@/components/common/GitSyncStatus'
+import BackupPanel from '@/components/common/BackupPanel'
 
 const panel = 'rounded-xl border border-line bg-surface p-5 sm:p-6'
 
@@ -13,6 +14,7 @@ export const Settings = () => {
   const store = useDashboardStore()
   const [githubUsername, setGithubUsername] = useState(store.githubUsername)
   const [leetcodeUsername, setLeetcodeUsername] = useState(store.leetcodeUsername)
+  const [dailyTarget, setDailyTarget] = useState(String(store.dailyTargetMinutes))
   const [savedMessage, setSavedMessage] = useState('')
   const [showClearConfirm, setShowClearConfirm] = useState(false)
 
@@ -20,6 +22,9 @@ export const Settings = () => {
     e.preventDefault()
     store.setGithubUsername(githubUsername.trim())
     store.setLeetcodeUsername(leetcodeUsername.trim())
+    const minutes = parseInt(dailyTarget, 10)
+    if (Number.isFinite(minutes)) store.setDailyTargetMinutes(minutes)
+    setDailyTarget(String(useDashboardStore.getState().dailyTargetMinutes))
     setSavedMessage('Settings saved.')
     setTimeout(() => setSavedMessage(''), 3000)
   }
@@ -74,10 +79,24 @@ export const Settings = () => {
                 helperText="Used for solved problems, acceptance rate and ranking."
               />
             </div>
-            <div className="mt-6">
-              <Button type="submit">Save changes</Button>
+          </section>
+
+          <section className={panel} aria-labelledby="target-heading">
+            <h2 id="target-heading" className="text-lg font-semibold">
+              Daily coding target
+            </h2>
+            <div className="mt-4 max-w-xs">
+              <Input
+                label="Minutes per day"
+                type="number"
+                value={dailyTarget}
+                onChange={setDailyTarget}
+                helperText="Between 5 and 1440. Shown on the Dashboard and the Timer page."
+              />
             </div>
           </section>
+
+          <Button type="submit">Save changes</Button>
         </form>
 
         <section className={panel} aria-labelledby="theme-heading">
@@ -104,6 +123,8 @@ export const Settings = () => {
             ))}
           </div>
         </section>
+
+        <BackupPanel />
 
         <GitSyncStatus />
 

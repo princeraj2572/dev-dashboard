@@ -3,11 +3,12 @@ import { GitCommitHorizontal, GitPullRequest, CheckCheck, Clock } from 'lucide-r
 import { useGithubData } from '@/hooks/useGithubData'
 import { useLeetCodeData } from '@/hooks/useLeetCodeData'
 import { useCodingTimer } from '@/hooks/useCodingTimer'
-import { useGoals } from '@/hooks/useGoals'
+import { useResolvedGoals } from '@/hooks/useResolvedGoals'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { calculateTotalScore } from '@/utils/scoreCalculator'
 import { calculateStreaks } from '@/utils/streakCalculator'
 import { lastNDays } from '@/utils/weekActivity'
+import { minutesPerDay } from '@/utils/timeStats'
 import MetricStrip from '@/components/cards/MetricStrip'
 import LanguageBar from '@/components/charts/LanguageBar'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
@@ -17,6 +18,7 @@ import StreakDisplay from '@/components/streak/StreakDisplay'
 import PageHeader from '@/components/layout/PageHeader'
 import Alert from '@/components/common/Alert'
 import ProgressBar from '@/components/common/ProgressBar'
+import ActivityFeed from '@/components/common/ActivityFeed'
 
 const linkButton =
   'inline-flex h-11 items-center justify-center rounded-lg bg-brand px-4 text-sm font-semibold text-brand-ink transition-colors hover:brightness-110 sm:h-10'
@@ -33,13 +35,15 @@ export const Dashboard = () => {
   const { data: githubStats, isLoading: githubLoading, error: githubError } = useGithubData()
   const { score: leetcodeScore, isLoading: leetcodeLoading, error: leetcodeError, errorKind: leetcodeErrorKind, ...leetcodeStats } =
     useLeetCodeData()
-  const { sessions } = useCodingTimer()
-  const { goals, getGoalProgress } = useGoals()
+  const { sessions, isRunning, elapsedSeconds } = useCodingTimer()
+  const { goals, getGoalProgress } = useResolvedGoals()
+  const { dailyTargetMinutes } = useDashboardStore()
 
   const combinedScore = calculateTotalScore(githubStats || null, leetcodeStats)
   const streakData = calculateStreaks(sessions)
   const week = lastNDays(githubStats?.commitsPerDay || [], 7)
   const codingHours = sessions.reduce((sum, s) => sum + s.duration, 0) / 3600
+  const todayMinutes = minutesPerDay(sessions, 1)[0].minutes + (isRunning ? elapsedSeconds / 60 : 0)
 
   if (!githubUsername && !leetcodeUsername) {
     return (
@@ -96,7 +100,7 @@ export const Dashboard = () => {
 
         <div className="grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <StreakDisplay streak={streakData} />
+            <StreakDisplay streak={streakData} today={{ minutes: todayMinutes, target: dailyTargetMinutes }} />
           </div>
 
           <section aria-label="Goals" className="rounded-xl border border-line bg-surface p-5 sm:p-6 lg:col-span-7">
@@ -121,7 +125,8 @@ export const Dashboard = () => {
                       <div className="mb-2 flex items-baseline justify-between gap-3">
                         <span className="min-w-0 truncate font-medium">{goal.title}</span>
                         <span className="shrink-0 text-sm tabular-nums text-subtle">
-                          {goal.current} of {goal.target} {goal.unit}
+                          {Number.isInteger(goal.current) ? goal.current : goal.current.toFixed(1)} of {goal.target}{' '}
+                          {goal.unit}
                         </span>
                       </div>
                       <ProgressBar value={progress} max={100} label={goal.title} />
@@ -159,6 +164,13 @@ export const Dashboard = () => {
             </div>
           )}
         </div>
+
+        {githubUsername && (
+          <ActivityFeed
+            items={githubStats?.recentActivity ?? []}
+            approximate={githubStats?.commitsApproximate}
+          />
+        )}
       </div>
     </>
   )
