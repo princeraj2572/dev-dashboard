@@ -1,12 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
 import { useDashboardStore } from '@/store/dashboardStore'
-import { fetchLeetCodeProfile, calculateLeetCodeStats, calculateLeetCodeScore } from '@/services/leetcodeAPI'
+import {
+  fetchLeetCodeProfile,
+  calculateLeetCodeStats,
+  calculateLeetCodeScore,
+  LeetCodeUserNotFoundError,
+} from '@/services/leetcodeAPI'
 import type { LeetCodeStats } from '@/types'
 
 interface UseLeetCodeDataReturn extends LeetCodeStats {
   score: number
   isLoading: boolean
   error: Error | null
+  errorKind: 'not-found' | 'unavailable' | null
 }
 
 export const useLeetCodeData = (): UseLeetCodeDataReturn => {
@@ -22,7 +28,7 @@ export const useLeetCodeData = (): UseLeetCodeDataReturn => {
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
     enabled: !!leetcodeUsername,
-    retry: 1,
+    retry: (count, err) => !(err instanceof LeetCodeUserNotFoundError) && count < 1,
   })
 
   const stats = calculateLeetCodeStats(profile || null)
@@ -33,5 +39,6 @@ export const useLeetCodeData = (): UseLeetCodeDataReturn => {
     score,
     isLoading,
     error: error as Error | null,
+    errorKind: !error ? null : error instanceof LeetCodeUserNotFoundError ? 'not-found' : 'unavailable',
   }
 }

@@ -16,7 +16,7 @@ const panel = 'rounded-xl border border-line bg-surface p-5 sm:p-6'
 export const Analytics = () => {
   const { githubUsername, leetcodeUsername } = useDashboardStore()
   const { data: githubStats, isLoading: githubLoading, error: githubError } = useGithubData()
-  const { score: leetcodeScore, isLoading: leetcodeLoading, error: leetcodeError, ...leetcodeStats } =
+  const { score: leetcodeScore, isLoading: leetcodeLoading, error: leetcodeError, errorKind: leetcodeErrorKind, ...leetcodeStats } =
     useLeetCodeData()
 
   if (!githubUsername && !leetcodeUsername) {
@@ -109,9 +109,19 @@ export const Analytics = () => {
             </h2>
 
             {leetcodeError ? (
-              <Alert type="warning" title="LeetCode stats are unavailable right now">
-                The service that supplies them did not respond. Reload later to try again.
-              </Alert>
+              leetcodeErrorKind === 'not-found' ? (
+                <Alert type="warning" title={`No LeetCode user named "${leetcodeUsername}"`}>
+                  Your LeetCode username can differ from your GitHub one. Check it in{' '}
+                  <Link to="/settings" className="font-semibold underline">
+                    Settings
+                  </Link>
+                  .
+                </Alert>
+              ) : (
+                <Alert type="warning" title="LeetCode stats are unavailable right now">
+                  The service that supplies them did not respond. Reload later to try again.
+                </Alert>
+              )
             ) : (
               <>
                 <MetricStrip

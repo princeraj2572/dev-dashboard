@@ -2,7 +2,7 @@ import { createApiClient, validateCredentials, callApi } from './apiClient'
 import { dedupedRequest } from './requestDedup'
 import type { LeetCodeStats } from '@/types'
 
-const LEETCODE_API_BASE = 'https://leetcode-api-fxckjtno.vercel.app'
+const LEETCODE_API_BASE = 'https://alfa-leetcode-api.onrender.com'
 const leetcodeClient = createApiClient({
   maxRetries: 2,
   retryDelay: 2000,
@@ -27,42 +27,71 @@ export interface LeetCodeProfile {
   ranking: number
 }
 
+export class LeetCodeUserNotFoundError extends Error {
+  constructor(username: string) {
+    super(`LeetCode user "${username}" was not found`)
+    this.name = 'LeetCodeUserNotFoundError'
+  }
+}
+
+interface SubmissionCount {
+  difficulty: string
+  submissions: number
+}
+
+const NOT_FOUND = { notFound: true } as const
+
+/**
+ * Reads a profile from the public alfa-leetcode-api. It reports unknown users
+ * with HTTP 200 and an `errors` array, so that has to be checked explicitly.
+ */
+const requestProfile = async (username: string): Promise<LeetCodeProfile | typeof NOT_FOUND> => {
+  const [solved, profile] = await Promise.all([
+    leetcodeClient.get(`${LEETCODE_API_BASE}/${encodeURIComponent(username)}/solved`, { timeout: 45000 }),
+    leetcodeClient.get(`${LEETCODE_API_BASE}/userProfile/${encodeURIComponent(username)}`, { timeout: 45000 }),
+  ])
+
+  if (solved.data?.errors || profile.data?.errors) return NOT_FOUND
+
+  const accepted = (solved.data.acSubmissionNum as SubmissionCount[] | undefined)?.find(
+    (s) => s.difficulty === 'All'
+  )?.submissions
+  const total = (solved.data.totalSubmissionNum as SubmissionCount[] | undefined)?.find(
+    (s) => s.difficulty === 'All'
+  )?.submissions
+
+  return {
+    username,
+    totalSolved: solved.data.solvedProblem || 0,
+    easySolved: solved.data.easySolved || 0,
+    mediumSolved: solved.data.mediumSolved || 0,
+    hardSolved: solved.data.hardSolved || 0,
+    totalQuestions: profile.data.totalQuestions || 0,
+    acceptanceRate: accepted && total ? (accepted / total) * 100 : 0,
+    ranking: profile.data.ranking || 0,
+  }
+}
+
+/**
+ * Returns the profile, or null when the service could not be reached.
+ * Throws LeetCodeUserNotFoundError when LeetCode has no such user.
+ */
 export const fetchLeetCodeProfile = async (username: string): Promise<LeetCodeProfile | null> => {
-  // Validate username
   const validation = validateCredentials(username)
   if (!validation.isValid) {
     console.error('LeetCode validation failed:', validation.error)
     return null
   }
 
-  return dedupedRequest(
+  const result = await dedupedRequest(
     'GET',
     `${LEETCODE_API_BASE}/${username}`,
-    () =>
-      callApi(
-        () =>
-          leetcodeClient
-            .get(`${LEETCODE_API_BASE}/${username}`, {
-              timeout: 15000,
-            })
-            .then((response) => {
-              const data = response.data
-
-              return {
-                username: data.username || username,
-                totalSolved: data.totalSolved || 0,
-                easySolved: data.easySolved || 0,
-                mediumSolved: data.mediumSolved || 0,
-                hardSolved: data.hardSolved || 0,
-                totalQuestions: data.totalQuestions || 0,
-                acceptanceRate: parseFloat(data.acceptanceRate) || 0,
-                ranking: data.ranking || 0,
-              }
-            }),
-        'LeetCode Profile'
-      ),
+    () => callApi(() => requestProfile(username), 'LeetCode Profile'),
     { username }
   )
+
+  if (result && 'notFound' in result) throw new LeetCodeUserNotFoundError(username)
+  return result
 }
 
 export const calculateLeetCodeStats = (profile: LeetCodeProfile | null): LeetCodeStats => {

@@ -5,10 +5,11 @@ interface LeetCodeStatsCardProps {
   stats: LeetCodeStats
   score: number
   isLoading: boolean
-  error?: boolean
+  error?: 'not-found' | 'unavailable' | null
+  username?: string
 }
 
-export const LeetCodeStatsCard = ({ stats, score, isLoading, error = false }: LeetCodeStatsCardProps) => {
+export const LeetCodeStatsCard = ({ stats, score, isLoading, error = null, username }: LeetCodeStatsCardProps) => {
   return (
     <section aria-label="LeetCode" className="rounded-xl border border-line bg-surface p-5 sm:p-6">
       <div className="flex items-start justify-between gap-4">
@@ -32,11 +33,22 @@ export const LeetCodeStatsCard = ({ stats, score, isLoading, error = false }: Le
         </div>
       ) : error ? (
         <div role="alert" className="mt-5 rounded-lg bg-amber-soft p-4 text-sm">
-          <p className="font-semibold">LeetCode stats are unavailable right now</p>
-          <p className="mt-0.5 text-subtle">
-            The service that supplies them did not respond. Your other stats are unaffected. It will retry
-            when you reload.
-          </p>
+          {error === 'not-found' ? (
+            <>
+              <p className="font-semibold">No LeetCode user named {username ? `"${username}"` : 'that'}</p>
+              <p className="mt-0.5 text-subtle">
+                Your LeetCode username can differ from your GitHub one. Check it in Settings.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-semibold">LeetCode stats are unavailable right now</p>
+              <p className="mt-0.5 text-subtle">
+                The service that supplies them did not respond. Your other stats are unaffected. It will retry
+                when you reload.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <>

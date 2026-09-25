@@ -31,7 +31,7 @@ const greeting = () => {
 export const Dashboard = () => {
   const { githubUsername, leetcodeUsername } = useDashboardStore()
   const { data: githubStats, isLoading: githubLoading, error: githubError } = useGithubData()
-  const { score: leetcodeScore, isLoading: leetcodeLoading, error: leetcodeError, ...leetcodeStats } =
+  const { score: leetcodeScore, isLoading: leetcodeLoading, error: leetcodeError, errorKind: leetcodeErrorKind, ...leetcodeStats } =
     useLeetCodeData()
   const { sessions } = useCodingTimer()
   const { goals, getGoalProgress } = useGoals()
@@ -153,7 +153,8 @@ export const Dashboard = () => {
                 stats={leetcodeStats}
                 score={leetcodeScore}
                 isLoading={leetcodeLoading}
-                error={!!leetcodeError}
+                error={leetcodeError ? leetcodeErrorKind : null}
+                username={leetcodeUsername}
               />
             </div>
           )}
