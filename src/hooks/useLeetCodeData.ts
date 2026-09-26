@@ -3,9 +3,9 @@ import { useDashboardStore } from '@/store/dashboardStore'
 import {
   fetchLeetCodeProfile,
   calculateLeetCodeStats,
-  calculateLeetCodeScore,
   LeetCodeUserNotFoundError,
 } from '@/services/leetcodeAPI'
+import { calculateLeetCodeScore } from '@/utils/scoreCalculator'
 import type { LeetCodeStats } from '@/types'
 
 interface UseLeetCodeDataReturn extends LeetCodeStats {

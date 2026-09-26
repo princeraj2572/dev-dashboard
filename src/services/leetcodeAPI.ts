@@ -117,10 +117,3 @@ export const calculateLeetCodeStats = (profile: LeetCodeProfile | null): LeetCod
     ranking: profile.ranking,
   }
 }
-
-export const calculateLeetCodeScore = (stats: LeetCodeStats): number => {
-  // Score formula: (easy * 1) + (medium * 3) + (hard * 5) + (acceptanceRate * 10)
-  const problemScore = stats.easySolved * 1 + stats.mediumSolved * 3 + stats.hardSolved * 5
-  const acceptanceBonus = Math.floor((stats.acceptanceRate / 100) * 10)
-  return problemScore + acceptanceBonus
-}
