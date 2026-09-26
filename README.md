@@ -1,390 +1,128 @@
-# Developer Productivity Dashboard 🚀
+# DevDash
 
-A comprehensive dashboard for developers to track GitHub contributions, LeetCode progress, coding sessions, and personal goals. Built with React, TypeScript, and Tailwind CSS.
+A personal dashboard that answers one question: did you code today? It combines your GitHub activity, LeetCode progress, timed coding sessions and goals into one score, a streak and a week you can read at a glance.
 
-## Features ✨
+Everything runs in the browser. Your goals, sessions and settings are stored in `localStorage`; there is no backend and no sign-in.
 
-### 📊 GitHub Integration
-- Real-time commit tracking
-- Pull request statistics
-- Language breakdown analysis
-- Repository insights
-- Weekly commitment trends
+## Features
 
-### 🎯 LeetCode Integration
-- Problem-solving progress tracking
-- Difficulty distribution (Easy/Medium/Hard)
-- Acceptance rate monitoring
-- Global ranking display
-- Problem solved statistics
+**Dashboard**
+- Total score with rank, the GitHub and LeetCode split, and a 7-day strip of commit activity
+- Metrics for commits this week, pull requests, problems solved and coding hours
+- Streak, best streak and today's progress against your daily coding target
+- Goals overview, language breakdown, LeetCode stats and a recent activity feed
 
-### ⏱️ Coding Timer
-- Track coding sessions
-- Calculate coding streaks
-- Session history management
-- Daily session aggregation
-- Productivity metrics
+**Analytics**
+- Commits per day for the last 7 days, languages used, and top repositories
+- LeetCode problems by difficulty, acceptance rate and global ranking
 
-### 🏆 Unified Scoring System
-- Combined GitHub + LeetCode score
-- Rank badges (Legend, Master, Advanced, etc.)
-- Score breakdown by category
-- Performance tracking
+**Coding timer**
+- Start and stop sessions; the timer keeps counting when you leave the page or reload
+- Daily target with a progress bar, and a 7-day chart of minutes coded
+- Session history, totals and averages
 
-### 🎪 Goal Management
-- Create custom development goals
-- Track progress with visual indicators
-- Set deadlines for goals
-- Completion tracking
-- Goal categories (tasks, hours, commits, problems, etc.)
+**Goals**
+- Set a target, unit and deadline, with days left and overdue warnings
+- Progress can be manual, or counted automatically from LeetCode problems solved, GitHub commits in the last 7 days, or timer hours
 
-### 🔥 Streak System
-- Current streak tracking
-- All-time longest streak
-- Visual streak badges
-- Last activity monitoring
-- Motivational messages
+**Settings**
+- GitHub and LeetCode usernames, daily coding target, light and dark theme
+- Export and import a backup of your goals, sessions and settings
+- Git sync status for this repository (development server only)
 
-### 📈 Analytics Dashboard
-- Commit trends visualization
-- Language usage pie charts
-- Top repositories display
-- LeetCode problem distribution
-- Acceptance rate metrics
+The layout is responsive: a side rail on desktop, an icon rail on tablets and a bottom tab bar on phones.
 
-## Tech Stack 🛠️
+## Getting started
 
-- **Frontend**: React 18.2 + TypeScript 5.x
-- **Build Tool**: Vite 8.0
-- **Styling**: Tailwind CSS 3.x
-- **State Management**: Zustand + React Query
-- **Visualization**: Recharts
-- **Routing**: React Router v6
-- **Package Manager**: npm
-
-## Prerequisites 📋
-
-- Node.js (v16 or higher)
-- npm (v8 or higher)
-- Git
-- GitHub Personal Access Token
-- LeetCode username (optional)
-
-## Installation 🔧
-
-### 1. Clone the Repository
+Requires Node.js 20.19 or newer (a Vite 8 requirement).
 
 ```bash
 git clone https://github.com/princeraj2572/dev-dashboard.git
 cd dev-dashboard
-```
-
-### 2. Install Dependencies
-
-```bash
 npm install
-```
-
-### 3. Set Up Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-VITE_GITHUB_TOKEN=your_github_personal_access_token_here
-```
-
-### Generate GitHub Personal Access Token
-
-1. Go to https://github.com/settings/tokens
-2. Click "Generate new token (classic)"
-3. Select scopes:
-   - `public_repo`
-   - `read:user`
-   - `user:email`
-4. Generate and copy the token
-5. Add it to `.env.local`
-
-### 4. Start the Development Server
-
-```bash
 npm run dev
 ```
 
-The dashboard will be available at `http://localhost:5174` (or next available port)
+Open http://localhost:5173, go to Settings, and enter your GitHub and LeetCode usernames.
 
-## Usage 📖
+### GitHub token (optional)
 
-### First Time Setup
+Without a token GitHub allows 60 requests an hour, which is enough for normal use. A token raises that to 5,000 an hour and lets every recent push be counted at once. Create `.env.local` in the project root:
 
-1. **Visit the Welcome Page**: Navigate to `/welcome`
-2. **Configure Settings**: Go to Settings and enter:
-   - GitHub username
-   - LeetCode username (optional)
-3. **Set Up Coding Timer**: Start tracking sessions on the DSA Tracker page
-4. **Create Goals**: Set development goals on the Goals page
+```env
+VITE_GITHUB_TOKEN=your_token_here
+```
 
-### Navigation
+A classic token with no extra scopes is enough for public data. `.env.local` is ignored by git (`*.local` in `.gitignore`). Restart the dev server after adding it. Note that Vite embeds `VITE_` variables in the built app, so only use a token you are comfortable exposing to anyone who can open your deployed copy.
 
-- **Dashboard**: Overview with score, streaks, stats, and quick goals
-- **Analytics**: Deep dive into GitHub and LeetCode statistics
-- **DSA Tracker**: Coding timer and session management
-- **Goals**: Create, track, and manage development goals
-- **Settings**: Configure usernames, tokens, and preferences
+## Scripts
 
-## Features Breakdown 
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` | Type-check and build for production |
+| `npm run preview` | Serve the production build |
+| `npm run lint` | Run ESLint |
 
-### Dashboard
-- **Score Display**: Your combined developer score with rank badge
-- **Streak Indicator**: Current and all-time longest coding streaks
-- **Goals Overview**: Quick view of top 3 active goals
-- **Stats Grid**: Commits, PRs, and problems solved this week
-- **Charts**: Commit trends and language breakdown
-- **LeetCode Stats**: Problem difficulty distribution
+## Tech stack
 
-### Analytics
-- **Commit Trends**: Line chart showing commits over time
-- **Language Distribution**: Pie chart of programming languages used
-- **Top Repositories**: List of your most-starred repositories
-- **LeetCode Metrics**: Problem breakdown by difficulty level
-- **Acceptance Rate**: LeetCode solution success rate
+React 19, TypeScript, Vite, Tailwind CSS v4, React Router 7, TanStack Query, Zustand, Recharts and lucide-react icons.
 
-### DSA Tracker
-- **Large Timer Display**: HH:MM:SS format with motivational messages
-- **Start/Stop Controls**: Begin and end coding sessions
-- **Session History**: Detailed list of all coding sessions
-- **Quick Stats**: Total hours, average session, daily total
-- **Session Management**: View, clear, or manage sessions
-
-### Goals
-- **Create Goals**: Form with title, target, unit, and deadline
-- **Progress Tracking**: Visual progress bars for each goal
-- **Difficulty Categories**: Easy/Medium/Hard tasks
-- **Completion Status**: Celebrate when targets are met
-- **Statistics**: Total, active, and completed goal counts
-
-### Settings
-- **GitHub Configuration**: Username and token management
-- **LeetCode Setup**: Optional username configuration
-- **Theme Toggle**: Light/Dark mode preference
-- **Session Management**: Clear coding session history
-- **Help Guide**: Setup instructions for all integrations
-
-## Project Structure 📁
+## Project structure
 
 ```
 src/
-├── pages/              # Page components (Dashboard, Analytics, etc.)
-├── components/         # Reusable UI components
-│   ├── layout/        # Layout wrapper, Sidebar, MainContent
-│   ├── cards/         # StatsCard component
-│   ├── charts/        # Chart components (CommitChart)
-│   ├── common/        # Common components (ErrorBoundary, LoadingSpinner)
-│   ├── leetcode/      # LeetCode components
-│   ├── score/         # Score display components
-│   ├── streak/        # Streak display components
-│   ├── goals/         # Goal management components
-│   └── timer/         # Timer components
-├── hooks/             # Custom React hooks
-│   ├── useGithubData.ts
-│   ├── useLeetCodeData.ts
-│   ├── useCodingTimer.ts
-│   └── useGoals.ts
-├── services/          # API services
-│   ├── githubAPI.ts
-│   └── leetcodeAPI.ts
-├── store/             # Zustand state management
-│   └── dashboardStore.ts
-├── types/             # TypeScript interfaces
-│   └── index.ts
-├── utils/             # Utility functions
-│   ├── scoreCalculator.ts
-│   ├── streakCalculator.ts
-│   └── codingStatsCalculator.ts
-├── App.tsx            # Main app component with routing
-└── main.tsx           # Entry point
+  pages/        Dashboard, Analytics, DSATracker (timer), Goals, Settings, WelcomePage
+  components/
+    layout/     Sidebar (responsive nav), page layout, PageHeader
+    cards/      MetricStrip, MetricCard
+    charts/     CommitChart, CodingTimeChart, LanguageBar, WeekStrip
+    common/     Button, Card, Alert, Badge, Modal, ProgressBar, ActivityFeed,
+                BackupPanel, GitSyncStatus
+    goals/      GoalCard, GoalForm
+    timer/      TimerDisplay, StartStopButton, TodayTarget, CodingSessionList
+    score/ streak/ leetcode/
+  hooks/        useGithubData, useLeetCodeData, useCodingTimer, useGoals,
+                useResolvedGoals, useGitStatus
+  services/     githubAPI, leetcodeAPI, apiClient (retries, error handling)
+  store/        dashboardStore (usernames, theme, daily target)
+  utils/        scoreCalculator, streakCalculator, goalSources, timeStats,
+                weekActivity, backup, timeAgo
+  index.css     Design tokens for light and dark themes
 ```
 
-## Available Scripts 📝
+## Data sources
 
-```bash
-# Development
-npm run dev           # Start dev server
+- **GitHub:** the public REST API. GitHub no longer includes commit lists in push events, so each recent push is resolved to a commit count with the compare API. Results are cached in `localStorage`, and without a token at most 20 new pushes are looked up per page load. Early counts can be estimates, and the dashboard says so; reloading refines them.
+- **LeetCode:** the public [alfa-leetcode-api](https://github.com/alfaarghya/alfa-leetcode-api) service. It runs on a free host, so the first request after a quiet spell can take up to a minute. If your username is not found, or the service is down, the dashboard says which.
 
-# Build
-npm run build        # Build for production
+## Data and privacy
 
-# Preview
-npm run preview      # Preview production build
+Stored in this browser only:
 
-# Type Check
-npm run type-check   # Run TypeScript type checking
+| Key | Contents |
+| --- | --- |
+| `github_username`, `leetcode_username` | Your usernames |
+| `goals` | Goals, including auto-tracking source and baseline |
+| `codingTimerState` | Timer state and saved sessions |
+| `daily_target_minutes` | Daily coding target |
+| `theme` | `light` or `dark` |
+| `github_push_details_v1` | Cached commit counts for past pushes |
 
-# Lint
-npm run lint         # Run ESLint (if configured)
-```
+Clearing site data removes all of it, so use Settings, Backup, Export backup to keep a copy. Importing a backup replaces your current goals, sessions and settings after you confirm.
 
-## Data Persistence 💾
+## Development notes
 
-The dashboard uses localStorage for persistent data:
-- **GitHub & LeetCode usernames**: `github_username`, `leetcode_username`
-- **Coding sessions**: `codingTimerState`
-- **Goals**: `goals`
-- **Theme preference**: `theme`
+- The git sync indicator calls a small read-only endpoint (`/__git-status`) defined in `vite.config.ts`. It only exists under `npm run dev` and is absent from production builds.
+- Colours, type and spacing are defined once as tokens in `src/index.css`. Dark mode is a `.dark` class on `<html>`.
 
-**Note**: GitHub token is stored in `.env.local` (never committed to git)
+## Troubleshooting
 
-## API Rate Limits ⚠️
+- **GitHub numbers are zero or an error shows:** check the username in Settings. If you have reloaded many times, you may have used the 60 requests per hour; wait, or add a token.
+- **LeetCode says the user was not found:** your LeetCode username can differ from your GitHub one. It must match exactly.
+- **LeetCode is slow or unavailable:** the free host may be waking up. Reload after a minute.
+- **The dev server will not start:** delete `node_modules`, run `npm install`, then `npm run dev`. If port 5173 is busy, Vite picks the next free port.
 
-### GitHub API
-- 60 requests/hour (unauthenticated)
-- 5,000 requests/hour (authenticated with token)
+## License
 
-### LeetCode API
-- Uses third-party proxy (Rate limits: ~2,000 requests/day)
-
-## Performance Optimizations ⚡
-
-- **React Query Caching**: 5-minute cache TTL for API data
-- **Lazy Loading**: Components load on demand
-- **Code Splitting**: Automatic with Vite
-- **Local Storage**: Persistent state without extra requests
-
-## Security Considerations 🔒
-
-- ✅ GitHub token stored in `.env.local` (never committed)
-- ✅ `.env.local` added to `.gitignore`
-- ✅ No sensitive data exposed in frontend code
-- ✅ API calls use Bearer token authentication
-- ✅ LeetCode data fetched via CORS-enabled proxy
-
-## Troubleshooting 🐛
-
-### GitHub data not loading
-- Verify GitHub username in Settings
-- Check GitHub token in `.env.local`
-- Ensure token has required scopes
-- Check GitHub API rate limit status
-
-### LeetCode data not showing
-- Verify LeetCode username spelling (case-sensitive)
-- Check internet connection
-- Verify third-party API is accessible
-
-### Dev server not starting
-```bash
-# Clear node_modules and reinstall
-rm -rf node_modules
-npm install
-npm run dev
-```
-
-### Port already in use
-The dev server automatically tries the next available port (5173 → 5174 → 5175)
-
-## Contributing 🤝
-
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## Future Enhancements 🔮
-
-- [ ] Dark mode improvements
-- [ ] Mobile app version
-- [ ] Data export (CSV, PDF)
-- [ ] Habit tracking
-- [ ] Social sharing features
-- [ ] Development roadmap planner
-- [ ] Interview prep mode
-- [ ] Contribution calendar visualization
-
-## License 📄
-
-MIT License - feel free to use this project for personal or commercial purposes
-
-## Support 💬
-
-For issues, questions, or suggestions:
-- Open an issue on GitHub
-- Check existing issues for solutions
-- Review troubleshooting section above
-
----
-
-**Start tracking your coding journey today!** 🚀
-
-Built with ❤️ for developers, by developers.
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+MIT
