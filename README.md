@@ -7,9 +7,9 @@ Everything runs in the browser. Your goals, sessions and settings are stored in 
 ## Features
 
 **Dashboard**
-- Total score with rank, the GitHub and LeetCode split, and a 7-day strip of commit activity
+- Total score with rank, the GitHub, LeetCode and streak split, and a 7-day strip of commit activity
 - Metrics for commits this week, pull requests, problems solved and coding hours
-- Streak, best streak and today's progress against your daily coding target
+- Streak, best streak and today's progress against your daily coding target. A day counts if you pushed to GitHub or finished a timer session
 - Goals overview, language breakdown, LeetCode stats and a recent activity feed
 
 **Analytics**
@@ -90,6 +90,19 @@ src/
                 weekActivity, backup, timeAgo
   index.css     Design tokens for light and dark themes
 ```
+
+## How the score works
+
+The score rewards showing up, not volume.
+
+| Part | Rule |
+| --- | --- |
+| Commits | 2 points each, but only the first 5 commits on any one day count |
+| Pull requests | 5 points each, counted once per pull request over the last 30 days, up to 6 |
+| LeetCode | Easy 1, medium 3, hard 5, plus up to 50 for acceptance rate |
+| Streak | 5 points for each day of your current streak, up to 50 |
+
+A streak day is any day with a GitHub push or a finished timer session. Today does not break it: if yesterday was active it stays alive until the day ends. GitHub only returns your last 300 public events, so a very busy account can show a streak shorter than the real one. Ranks run from Getting started to Legend at 800 points. The rules are constants in `src/utils/scoreCalculator.ts`.
 
 ## Data sources
 

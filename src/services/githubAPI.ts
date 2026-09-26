@@ -1,6 +1,7 @@
 import { createApiClient, validateCredentials, callApi } from './apiClient'
 import { dedupedRequest } from './requestDedup'
 import type { ActivityItem, GithubStats } from '@/types'
+import { toDayKey } from '@/utils/streakCalculator'
 
 const GITHUB_API_BASE = 'https://api.github.com'
 const githubClient = createApiClient({
@@ -47,20 +48,37 @@ export const fetchUserEvents = async (username: string, token?: string) => {
   return dedupedRequest(
     'GET',
     `${GITHUB_API_BASE}/users/${username}/events`,
-    () =>
-      callApi(
-        () =>
-          githubClient
-            .get<GithubEvent[]>(`${GITHUB_API_BASE}/users/${username}/events`, {
-              headers: authHeaders(token),
-              params: { per_page: 100 },
-              timeout: 10000,
-            })
-            .then((r) => r.data),
-        'GitHub Events'
-      ),
+    () => fetchEventPages(username, token),
     { username }
   )
+}
+
+const EVENT_PAGES = 3 // GitHub serves at most 300 events, going back 90 days
+
+/**
+ * Fetches up to three pages of public events. One busy day can fill a whole
+ * page, so a single page can hide everything older than a few days and break
+ * streaks. Returns null only if the first page fails.
+ */
+const fetchEventPages = async (username: string, token?: string): Promise<GithubEvent[] | null> => {
+  const all: GithubEvent[] = []
+  for (let page = 1; page <= EVENT_PAGES; page++) {
+    const events = await callApi(
+      () =>
+        githubClient
+          .get<GithubEvent[]>(`${GITHUB_API_BASE}/users/${username}/events`, {
+            headers: authHeaders(token),
+            params: { per_page: 100, page },
+            timeout: 10000,
+          })
+          .then((r) => r.data),
+      'GitHub Events'
+    )
+    if (!events) return page === 1 ? null : all // keep what we have if a later page fails
+    all.push(...events)
+    if (events.length < 100) break
+  }
+  return all
 }
 
 export const fetchUserRepos = async (username: string, token?: string) => {
@@ -265,6 +283,7 @@ export const calculateGithubStats = (
       languageBreakdown: [],
       topRepos: [],
       recentActivity: [],
+      activeDays: [],
       commitsApproximate: false,
     }
   }
@@ -287,7 +306,17 @@ export const calculateGithubStats = (
     commitsPerDay[date] = (commitsPerDay[date] || 0) + commits
   })
 
-  const totalPRs = events.filter((e) => e.type === 'PullRequestEvent').length
+  // Each pull request once (opened, merged and closed are separate events), over the last 30 days.
+  const monthAgo = Date.now() - 30 * 86400000
+  const totalPRs = new Set(
+    events
+      .filter((e) => e.type === 'PullRequestEvent' && new Date(e.created_at).getTime() > monthAgo)
+      .map((e) => `${e.repo.name}#${e.payload.number ?? e.payload.pull_request?.number ?? e.id ?? e.created_at}`)
+  ).size
+
+  const activeDays = [
+    ...new Set(events.filter((e) => e.type === 'PushEvent').map((e) => toDayKey(e.created_at))),
+  ]
 
   const languageCounts: Record<string, number> = {}
   if (repos) {
@@ -323,6 +352,7 @@ export const calculateGithubStats = (
     languageBreakdown,
     topRepos,
     recentActivity: buildActivity(events, pushDetails),
+    activeDays,
     commitsApproximate: approximate,
   }
 }

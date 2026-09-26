@@ -12,8 +12,10 @@ export const StreakDisplay = ({ streak, today }: StreakDisplayProps) => {
   const filled = Math.min(streak.currentStreak, 7)
   const message =
     streak.currentStreak === 0
-      ? 'Log a coding session today to start a streak.'
-      : streak.currentStreak >= streak.longestStreak
+      ? 'Push a commit or finish a timer session today to start a streak.'
+      : !streak.activeToday
+        ? 'Nothing yet today. Push a commit or finish a session to keep it going.'
+        : streak.currentStreak >= streak.longestStreak
         ? 'This is your longest streak yet.'
         : `${streak.longestStreak - streak.currentStreak} more ${
             streak.longestStreak - streak.currentStreak === 1 ? 'day' : 'days'
@@ -22,6 +24,7 @@ export const StreakDisplay = ({ streak, today }: StreakDisplayProps) => {
   return (
     <section aria-label="Coding streak" className="rounded-xl border border-line bg-surface p-5 sm:p-6">
       <h2 className="text-lg font-semibold">Streak</h2>
+      <p className="text-sm text-subtle">Days with a GitHub push or a timer session</p>
 
       <p className="mt-4 flex items-baseline gap-2">
         <span className="font-display text-7xl font-extrabold leading-none tracking-tight tabular-nums">
@@ -63,7 +66,7 @@ export const StreakDisplay = ({ streak, today }: StreakDisplayProps) => {
           <dd className="font-display text-xl font-bold tabular-nums">{streak.longestStreak} days</dd>
         </div>
         <div>
-          <dt className="text-subtle">Last session</dt>
+          <dt className="text-subtle">Last active</dt>
           <dd className="font-display text-xl font-bold">
             {streak.lastActivityDate
               ? new Date(streak.lastActivityDate).toLocaleDateString(undefined, {

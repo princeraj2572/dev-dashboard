@@ -4,74 +4,69 @@ export interface StreakData {
   currentStreak: number
   longestStreak: number
   lastActivityDate: string | null
+  /** True when today already has a push or a finished session. */
+  activeToday: boolean
 }
 
-export const calculateStreaks = (sessions: CodingSession[]): StreakData => {
-  if (sessions.length === 0) {
-    return {
-      currentStreak: 0,
-      longestStreak: 0,
-      lastActivityDate: null,
-    }
+const DAY_MS = 86400000
+
+/** A local calendar day as "YYYY-MM-DD". */
+export const toDayKey = (time: number | string | Date): string => {
+  const d = new Date(time)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+/** Days since the epoch for a "YYYY-MM-DD" key. Built from UTC parts so DST cannot shift it. */
+const dayNumber = (key: string): number => {
+  const [y, m, d] = key.split('-').map(Number)
+  return Date.UTC(y, m - 1, d) / DAY_MS
+}
+
+const keyToDate = (key: string): Date => {
+  const [y, m, d] = key.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+
+/**
+ * A day counts when there was any coding activity: a GitHub push (`activeDays`)
+ * or a finished timer session. The streak is still alive if today has not
+ * happened yet but yesterday did.
+ */
+export const calculateStreaks = (
+  sessions: CodingSession[],
+  activeDays: string[] = [],
+  now: number = Date.now()
+): StreakData => {
+  const keys = new Set<string>(activeDays)
+  for (const s of sessions) keys.add(toDayKey(s.end))
+
+  if (keys.size === 0) {
+    return { currentStreak: 0, longestStreak: 0, lastActivityDate: null, activeToday: false }
   }
 
-  // Get unique dates from sessions, sorted descending
-  const uniqueDates = Array.from(
-    new Set(sessions.map((s) => new Date(s.end).toDateString()))
-  ).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-
-  const today = new Date().toDateString()
-  const yesterday = new Date(Date.now() - 86400000).toDateString()
-
-  // Check if streak is still active
-  const lastActivityDate = uniqueDates[0]
-  const isStreakActive = lastActivityDate === today || lastActivityDate === yesterday
+  const sortedKeys = [...keys].sort().reverse() // ISO keys sort chronologically; newest first
+  const days = sortedKeys.map(dayNumber)
+  const today = dayNumber(toDayKey(now))
+  const newest = days[0]
 
   let currentStreak = 0
-  let longestStreak = 0
-  let tempStreak = 1
-
-  if (isStreakActive) {
-    // Calculate current streak
-    for (let i = 0; i < uniqueDates.length; i++) {
-      const current = new Date(uniqueDates[i]).getTime()
-      const next = i + 1 < uniqueDates.length ? new Date(uniqueDates[i + 1]).getTime() : null
-
-      if (next) {
-        const dayDiff = (current - next) / (1000 * 60 * 60 * 24)
-        if (dayDiff === 1) {
-          tempStreak++
-        } else {
-          break
-        }
-      }
-    }
-    currentStreak = tempStreak
+  if (newest === today || newest === today - 1) {
+    currentStreak = 1
+    for (let i = 1; i < days.length && days[i] === days[i - 1] - 1; i++) currentStreak++
   }
 
-  // Calculate longest streak (all-time)
-  tempStreak = 1
-  for (let i = 0; i < uniqueDates.length; i++) {
-    const current = new Date(uniqueDates[i]).getTime()
-    const next = i + 1 < uniqueDates.length ? new Date(uniqueDates[i + 1]).getTime() : null
-
-    if (next) {
-      const dayDiff = (current - next) / (1000 * 60 * 60 * 24)
-      if (dayDiff === 1) {
-        tempStreak++
-      } else {
-        longestStreak = Math.max(longestStreak, tempStreak)
-        tempStreak = 1
-      }
-    } else {
-      longestStreak = Math.max(longestStreak, tempStreak)
-    }
+  let longestStreak = 1
+  let run = 1
+  for (let i = 1; i < days.length; i++) {
+    run = days[i] === days[i - 1] - 1 ? run + 1 : 1
+    longestStreak = Math.max(longestStreak, run)
   }
 
   return {
     currentStreak,
     longestStreak,
-    lastActivityDate,
+    lastActivityDate: keyToDate(sortedKeys[0]).toDateString(),
+    activeToday: newest === today,
   }
 }
 

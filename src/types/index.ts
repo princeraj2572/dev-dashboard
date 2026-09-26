@@ -6,6 +6,8 @@ export interface GithubStats {
   languageBreakdown: { language: string; percentage: number }[]
   topRepos: { name: string; stars: number; commits: number }[]
   recentActivity: ActivityItem[]
+  /** Local days ('YYYY-MM-DD') with at least one push, from the events GitHub still returns. */
+  activeDays: string[]
   /** True when some pushes could not be resolved to a commit count and were counted as one. */
   commitsApproximate: boolean
 }

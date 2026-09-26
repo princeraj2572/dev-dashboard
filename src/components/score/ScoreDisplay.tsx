@@ -11,8 +11,12 @@ interface ScoreDisplayProps {
 /** The one loud element on the dashboard: total score, its split, and the last week of commits. */
 export const ScoreDisplay = ({ score, week }: ScoreDisplayProps) => {
   const rankLabel = getScoreRank(score.totalScore)
-  const total = score.githubScore + score.leetcodeScore
-  const githubShare = total > 0 ? (score.githubScore / total) * 100 : 0
+  const parts = [
+    { name: 'GitHub', value: score.githubScore, bar: 'bg-white' },
+    { name: 'LeetCode', value: score.leetcodeScore, bar: 'bg-[#f0b04a]' },
+    { name: 'Streak', value: score.streakScore, bar: 'bg-white/45' },
+  ]
+  const total = parts.reduce((sum, p) => sum + p.value, 0)
 
   return (
     <section
@@ -32,26 +36,23 @@ export const ScoreDisplay = ({ score, week }: ScoreDisplayProps) => {
           <div
             className="flex h-2 overflow-hidden rounded-full bg-white/15"
             role="img"
-            aria-label={`GitHub ${score.githubScore}, LeetCode ${score.leetcodeScore}`}
+            aria-label={parts.map((p) => `${p.name} ${p.value}`).join(', ')}
           >
-            <div className="h-full bg-white" style={{ width: `${githubShare}%` }} />
-            <div className="h-full bg-[#f0b04a]" style={{ width: `${total > 0 ? 100 - githubShare : 0}%` }} />
+            {total > 0 &&
+              parts.map((p) => (
+                <div key={p.name} className={`h-full ${p.bar}`} style={{ width: `${(p.value / total) * 100}%` }} />
+              ))}
           </div>
-          <dl className="mt-3 flex gap-8 text-sm">
-            <div>
-              <dt className="flex items-center gap-2 text-slab-ink/70">
-                <span className="size-2 rounded-full bg-white" aria-hidden="true" />
-                GitHub
-              </dt>
-              <dd className="font-display text-2xl font-bold tabular-nums">{score.githubScore}</dd>
-            </div>
-            <div>
-              <dt className="flex items-center gap-2 text-slab-ink/70">
-                <span className="size-2 rounded-full bg-[#f0b04a]" aria-hidden="true" />
-                LeetCode
-              </dt>
-              <dd className="font-display text-2xl font-bold tabular-nums">{score.leetcodeScore}</dd>
-            </div>
+          <dl className="mt-3 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+            {parts.map((p) => (
+              <div key={p.name}>
+                <dt className="flex items-center gap-2 text-slab-ink/70">
+                  <span className={`size-2 rounded-full ${p.bar}`} aria-hidden="true" />
+                  {p.name}
+                </dt>
+                <dd className="font-display text-2xl font-bold tabular-nums">{p.value}</dd>
+              </div>
+            ))}
           </dl>
         </div>
       </div>
@@ -75,8 +76,8 @@ export const ScoreDisplay = ({ score, week }: ScoreDisplayProps) => {
             </dd>
           </div>
           <div>
-            <dt className="text-slab-ink/70">Streak bonus</dt>
-            <dd className="font-display text-xl font-bold tabular-nums">{score.breakdown.streakBonus}</dd>
+            <dt className="text-slab-ink/70">Pull requests</dt>
+            <dd className="font-display text-xl font-bold tabular-nums">{score.breakdown.prs}</dd>
           </div>
         </dl>
       </div>

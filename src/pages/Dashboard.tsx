@@ -39,8 +39,8 @@ export const Dashboard = () => {
   const { goals, getGoalProgress } = useResolvedGoals()
   const { dailyTargetMinutes } = useDashboardStore()
 
-  const combinedScore = calculateTotalScore(githubStats || null, leetcodeStats)
-  const streakData = calculateStreaks(sessions)
+  const streakData = calculateStreaks(sessions, githubStats?.activeDays)
+  const combinedScore = calculateTotalScore(githubStats || null, leetcodeStats, streakData.currentStreak)
   const week = lastNDays(githubStats?.commitsPerDay || [], 7)
   const codingHours = sessions.reduce((sum, s) => sum + s.duration, 0) / 3600
   const todayMinutes = minutesPerDay(sessions, 1)[0].minutes + (isRunning ? elapsedSeconds / 60 : 0)
@@ -74,8 +74,9 @@ export const Dashboard = () => {
       <div className="space-y-6">
         {githubError && (
           <Alert type="error" title="GitHub stats did not load">
-            Check the username in <Link to="/settings" className="font-semibold underline">Settings</Link>. Without
-            a token GitHub allows 60 requests an hour, so waiting a while or adding a token also helps.
+            Most often this is GitHub&apos;s limit of 60 requests an hour without a token; it resets on the hour, and a
+            token in Settings lifts it. Otherwise check the username in{' '}
+            <Link to="/settings" className="font-semibold underline">Settings</Link>.
           </Alert>
         )}
 
@@ -91,6 +92,7 @@ export const Dashboard = () => {
             {
               label: 'Pull requests',
               value: githubStats?.totalPRs ?? 0,
+              note: 'Last 30 days',
               icon: <GitPullRequest className="size-4" />,
             },
             { label: 'Problems solved', value: leetcodeStats.totalSolved, icon: <CheckCheck className="size-4" /> },

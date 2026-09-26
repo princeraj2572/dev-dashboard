@@ -11,6 +11,9 @@ export const useGithubData = () => {
     queryKey: ['github', githubUsername],
     queryFn: async () => {
       const events = await fetchUserEvents(githubUsername, token)
+      // The API layer returns null on failure (rate limit, offline, unknown user). Report that
+      // instead of turning it into a week of zeros.
+      if (!events) throw new Error('GitHub activity is unavailable')
       const repos = await fetchUserRepos(githubUsername, token)
       const pushDetails = await fetchPushDetails(events, token)
       return calculateGithubStats(events, repos, pushDetails)

@@ -49,18 +49,19 @@ export const Analytics = () => {
 
             {githubError && (
               <Alert type="error" title="GitHub stats did not load">
-                Check the username in{' '}
+                Most often this is GitHub&apos;s limit of 60 requests an hour without a token, which resets on the hour.
+                Otherwise check the username in{' '}
                 <Link to="/settings" className="font-semibold underline">
                   Settings
                 </Link>
-                , or try again later if you have hit GitHub&apos;s hourly limit.
+                .
               </Alert>
             )}
 
             <MetricStrip
               items={[
                 { label: 'Commits this week', value: githubStats?.totalCommitsThisWeek ?? 0 },
-                { label: 'Pull requests', value: githubStats?.totalPRs ?? 0 },
+                { label: 'Pull requests', value: githubStats?.totalPRs ?? 0, note: 'Last 30 days' },
                 { label: 'Languages', value: githubStats?.languageBreakdown?.length ?? 0 },
                 { label: 'Top repositories', value: githubStats?.topRepos?.length ?? 0 },
               ]}
