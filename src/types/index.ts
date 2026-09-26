@@ -8,6 +8,8 @@ export interface GithubStats {
   recentActivity: ActivityItem[]
   /** Local days ('YYYY-MM-DD') with at least one push, from the events GitHub still returns. */
   activeDays: string[]
+  /** Commits per local day ('YYYY-MM-DD') for every push in the window, or the merged history. */
+  dayCounts: Record<string, number>
   /** True when some pushes could not be resolved to a commit count and were counted as one. */
   commitsApproximate: boolean
 }

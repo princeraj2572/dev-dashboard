@@ -102,7 +102,7 @@ The score rewards showing up, not volume.
 | LeetCode | Easy 1, medium 3, hard 5, plus up to 50 for acceptance rate |
 | Streak | 5 points for each day of your current streak, up to 50 |
 
-A streak day is any day with a GitHub push or a finished timer session. Today does not break it: if yesterday was active it stays alive until the day ends. GitHub only returns your last 300 public events, so a very busy account can show a streak shorter than the real one. Ranks run from Getting started to Legend at 800 points. The rules are constants in `src/utils/scoreCalculator.ts`.
+A streak day is any day with a GitHub push or a finished timer session. Today does not break it: if yesterday was active it stays alive until the day ends. GitHub only returns a short rolling window of your public events (about 90 for a busy account), and every new push pushes older days out of it. To stop streaks shrinking as you code, DevDash remembers the commits it has seen for each day in this browser and keeps the highest count per day. That means history starts from the first time you open the app: days that had already left GitHub's window before then cannot be recovered. Ranks run from Getting started to Legend at 800 points. The rules are constants in `src/utils/scoreCalculator.ts`.
 
 ## Data sources
 
@@ -121,6 +121,7 @@ Stored in this browser only:
 | `daily_target_minutes` | Daily coding target |
 | `theme` | `light` or `dark` |
 | `github_push_details_v1` | Cached commit counts for past pushes |
+| `github_activity_history_v1` | Commits per day that the app has seen, so streaks survive GitHub's short event window |
 
 Clearing site data removes all of it, so use Settings, Backup, Export backup to keep a copy. Importing a backup replaces your current goals, sessions and settings after you confirm.
 

@@ -284,6 +284,7 @@ export const calculateGithubStats = (
       topRepos: [],
       recentActivity: [],
       activeDays: [],
+      dayCounts: {},
       commitsApproximate: false,
     }
   }
@@ -314,9 +315,14 @@ export const calculateGithubStats = (
       .map((e) => `${e.repo.name}#${e.payload.number ?? e.payload.pull_request?.number ?? e.id ?? e.created_at}`)
   ).size
 
-  const activeDays = [
-    ...new Set(events.filter((e) => e.type === 'PushEvent').map((e) => toDayKey(e.created_at))),
-  ]
+  // Commits on every day the event window covers (unresolved pushes count as one).
+  const dayCounts: Record<string, number> = {}
+  for (const event of events) {
+    if (event.type !== 'PushEvent') continue
+    const known = event.payload.commits?.length ?? (event.payload.head ? pushDetails[event.payload.head]?.count : undefined)
+    const day = toDayKey(event.created_at)
+    dayCounts[day] = (dayCounts[day] ?? 0) + (known ?? 1)
+  }
 
   const languageCounts: Record<string, number> = {}
   if (repos) {
@@ -352,7 +358,8 @@ export const calculateGithubStats = (
     languageBreakdown,
     topRepos,
     recentActivity: buildActivity(events, pushDetails),
-    activeDays,
+    activeDays: Object.keys(dayCounts),
+    dayCounts,
     commitsApproximate: approximate,
   }
 }
