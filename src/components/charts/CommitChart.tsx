@@ -28,10 +28,10 @@ export const CommitChart = ({ data }: CommitChartProps) => {
   return (
     <div className="h-64" role="img" aria-label="Bar chart of commits per day for the last 7 days">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={chartData} barCategoryGap="28%" margin={{ top: 8, right: 4, bottom: 0, left: -12 }}>
+        <BarChart data={chartData} barCategoryGap="28%" margin={{ top: 8, right: 4, bottom: 0, left: 0 }}>
           <CartesianGrid vertical={false} stroke="var(--line)" />
           <XAxis dataKey="weekday" tickLine={false} axisLine={false} tick={axisTick} />
-          <YAxis allowDecimals={false} tickLine={false} axisLine={false} tick={axisTick} width={40} />
+          <YAxis allowDecimals={false} tickLine={false} axisLine={false} tick={axisTick} width={36} />
           <Tooltip
             cursor={{ fill: 'var(--sunken)' }}
             contentStyle={{
