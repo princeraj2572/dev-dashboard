@@ -40,6 +40,7 @@ interface SubmissionCount {
 }
 
 const NOT_FOUND = { notFound: true } as const
+const UNRANKED_THRESHOLD = 5_000_000
 
 /**
  * Reads a profile from the public alfa-leetcode-api. It reports unknown users
@@ -68,7 +69,8 @@ const requestProfile = async (username: string): Promise<LeetCodeProfile | typeo
     hardSolved: solved.data.hardSolved || 0,
     totalQuestions: profile.data.totalQuestions || 0,
     acceptanceRate: accepted && total ? (accepted / total) * 100 : 0,
-    ranking: profile.data.ranking || 0,
+    // LeetCode reports about 5,000,001 for accounts too new to be ranked; treat that as no ranking.
+    ranking: profile.data.ranking && profile.data.ranking < UNRANKED_THRESHOLD ? profile.data.ranking : 0,
   }
 }
 
